@@ -14,6 +14,9 @@ import Planning from './pages/Planning'
 import Goals from './pages/Goals'
 import Debts from './pages/Debts'
 import Settings from './pages/Settings'
+import Agenda from './pages/Agenda'
+import Accounts from './pages/Accounts'
+import Vaults from './pages/Vaults'
 
 function Splash({ children }: { children?: React.ReactNode }) {
   return <div className="min-h-dvh grid place-items-center text-ink2 text-sm px-6 text-center">{children ?? 'Carregando…'}</div>
@@ -40,6 +43,9 @@ function Shell() {
           <Route element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="lancamentos" element={<Transactions />} />
+            <Route path="agenda" element={<Agenda />} />
+            <Route path="contas" element={<Accounts />} />
+            <Route path="caixinhas" element={<Vaults />} />
             <Route path="planilha" element={<SheetPage />} />
             <Route path="planejamento" element={<Planning />} />
             <Route path="metas" element={<Goals />} />

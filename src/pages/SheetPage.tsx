@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useStore } from '../lib/store'
-import { buckets, inRange } from '../lib/period'
+import { buckets, inRange, todayISO } from '../lib/period'
+import { isDone } from '../lib/tx'
 import { compact, fmtDate, money } from '../lib/format'
 import { solid } from '../lib/colors'
 import { PeriodBar, usePeriod } from '../components/PeriodBar'
@@ -22,7 +23,8 @@ export default function SheetPage() {
   const bs = useMemo(() => buckets(period), [period])
 
   const { groups, totals } = useMemo(() => {
-    const pool = data.transactions.filter((t) => (mode === 'prev' ? true : t.paid) && inRange(t.date, { start: bs[0].start, end: bs[bs.length - 1].end }))
+    const today = todayISO()
+    const pool = data.transactions.filter((t) => (mode === 'prev' ? true : isDone(t, today)) && inRange(t.date, { start: bs[0].start, end: bs[bs.length - 1].end }))
     const idx = (date: string) => bs.findIndex((b) => date >= b.start && date <= b.end)
     const build = (filter: (t: Transaction) => boolean, key: (t: Transaction) => string | null, meta: (id: string) => { name: string; icon: string; color: ColorKey }): Row[] => {
       const m = new Map<string, Row>()
@@ -48,7 +50,8 @@ export default function SheetPage() {
     const income = build((t) => t.kind === 'income', (t) => t.source_id, srcMeta)
     const fixed = build((t) => t.kind === 'expense' && t.nature === 'fixed', (t) => t.category_id, catMeta)
     const variable = build((t) => t.kind === 'expense' && t.nature !== 'fixed', (t) => t.category_id, catMeta)
-    const invest = build((t) => t.kind === 'investment', (t) => t.category_id, catMeta)
+    const vaultMeta = (id: string) => data.vaults.find((v) => v.id === id) ?? catMeta(id)
+    const invest = build((t) => t.kind === 'investment', (t) => t.vault_id ?? t.category_id, vaultMeta)
     const sum = (rows: Row[]) => bs.map((_, i) => rows.reduce((a, r) => a + r.cells[i], 0))
     const gi = sum(income), gf = sum(fixed), gv = sum(variable), gn = sum(invest)
     const groups: Group[] = [

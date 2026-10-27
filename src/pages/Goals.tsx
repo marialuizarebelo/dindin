@@ -2,13 +2,13 @@ import { useMemo, useState } from 'react'
 import { differenceInCalendarMonths, format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Plus, Sparkles } from 'lucide-react'
-import { Icon, IconBadge } from '../components/Icon'
+import { IconBadge } from '../components/Icon'
 import { useStore } from '../lib/store'
 import { lastMonths, todayISO } from '../lib/period'
-import { goalSaved, summarize, txIn } from '../lib/stats'
+import { goalSaved } from '../lib/stats'
+import { isDone } from '../lib/tx'
 import { money, moneyInt, parseMoney, percent } from '../lib/format'
-import { solid, COLOR_KEYS } from '../lib/colors'
-import { BarChart, Donut } from '../components/Charts'
+import { COLOR_KEYS } from '../lib/colors'
 import { useTxSheet } from '../components/TxSheet'
 import { Card, ColorPick, TintCard, ConfirmButton, Empty, IconPick, Field, PageTitle, Progress, Sheet } from '../components/ui'
 import type { ColorKey, Goal } from '../lib/types'
@@ -16,53 +16,25 @@ import type { ColorKey, Goal } from '../lib/types'
 export default function Goals() {
   const { data } = useStore()
   const { open } = useTxSheet()
+  const today = todayISO()
   const [editing, setEditing] = useState<Goal | 'new' | null>(null)
+  const months = useMemo(() => lastMonths(today, 12), [today])
 
-  const inv = useMemo(() => data.transactions.filter((t) => t.kind === 'investment' && t.paid), [data.transactions])
-  const total = inv.reduce((a, t) => a + t.amount, 0)
-  const months = useMemo(() => lastMonths(todayISO(), 12), [])
-  const monthly = useMemo(() => months.map((m) => summarize(txIn(data.transactions, m)).investment), [data.transactions, months])
-  const avg = monthly.filter((v) => v > 0).reduce((a, b) => a + b, 0) / Math.max(monthly.filter((v) => v > 0).length, 1)
-  const alloc = useMemo(() => {
-    const m = new Map<string, number>()
-    for (const t of inv) m.set(t.category_id ?? '_', (m.get(t.category_id ?? '_') ?? 0) + t.amount)
-    return [...m.entries()].map(([id, value]) => {
-      const c = data.categories.find((x) => x.id === id)
-      return { label: c?.name ?? 'Outros', value, color: solid(c?.color ?? 'gray'), icon: c?.icon ?? 'circle' }
-    }).sort((a, b) => b.value - a.value)
-  }, [inv, data.categories])
+  const saved = data.goals.reduce((a, g) => a + goalSaved(data, g.id), 0)
+  const missing = data.goals.reduce((a, g) => a + Math.max(g.target - goalSaved(data, g.id), 0), 0)
+  const done = data.goals.filter((g) => goalSaved(data, g.id) >= g.target).length
 
   return (
     <>
-      <PageTitle title="Metas e investimentos" subtitle="O que você está construindo"
+      <PageTitle title="Metas" subtitle="O que você está construindo"
         actions={<button className="btn btn-primary" onClick={() => setEditing('new')}><Plus size={16} /> Nova meta</button>} />
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4">
-        <TintCard color="purple" icon="piggy" label="Total investido" delay={20}><div className="money num font-display kpi-num">{money(total)}</div></TintCard>
-        <TintCard color="blue" icon="trend" label="Média por mês" delay={60}><div className="money num font-display kpi-num">{money(avg)}</div></TintCard>
-        <TintCard color="green" icon="target" label="Metas" delay={100} className="col-span-2 lg:col-span-1">
-          <div className="num font-display kpi-num">{data.goals.filter((g) => goalSaved(data, g.id) >= g.target).length}<span className="text-ink3"> / {data.goals.length}</span><span className="text-[14px] text-ink2 font-sans"> concluídas</span></div>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-5">
+        <TintCard color="green" icon="piggy" label="Guardado nas metas" delay={20}><div className="money num font-display kpi-num">{money(saved)}</div></TintCard>
+        <TintCard color="orange" icon="target" label="Falta juntar" delay={60}><div className="money num font-display kpi-num">{money(missing)}</div></TintCard>
+        <TintCard color="purple" icon="star" label="Metas" delay={100} className="col-span-2 lg:col-span-1">
+          <div className="num font-display kpi-num">{done}<span className="text-ink3"> / {data.goals.length}</span><span className="text-[14px] text-ink2 font-sans"> concluídas</span></div>
         </TintCard>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3 mb-4">
-        <Card className="lg:col-span-2" delay={140}>
-          <div className="font-semibold text-[16px] mb-3">Aportes por mês</div>
-          <BarChart labels={months.map((m) => m.label)} series={[{ name: 'Investido', color: solid('blue'), values: monthly }]} height={210} />
-        </Card>
-        <Card delay={180}>
-          <div className="font-semibold text-[16px] mb-3">Onde está investido</div>
-          {alloc.length === 0 ? <Empty icon="sprout" title="Sem aportes ainda" /> : (
-            <div className="flex flex-col items-center gap-4">
-              <Donut size={150} thickness={18} slices={alloc}><div><div className="text-[11.5px] text-ink2">Total</div><div className="money num font-bold">{moneyInt(total)}</div></div></Donut>
-              <div className="w-full flex flex-col gap-1.5">
-                {alloc.slice(0, 5).map((a) => (
-                  <div key={a.label} className="flex items-center gap-2 text-[13.5px]"><i className="dot" style={{ background: a.color }} /><span className="flex-1 truncate"><Icon name={a.icon} size={15} className="text-ink2" />{a.label}</span><span className="num text-ink2">{percent(a.value / total)}</span></div>
-                ))}
-              </div>
-            </div>
-          )}
-        </Card>
       </div>
 
       {data.goals.length === 0 ? (
@@ -75,7 +47,7 @@ export default function Goals() {
             const left = Math.max(g.target - saved, 0)
             const mLeft = g.deadline ? Math.max(differenceInCalendarMonths(parseISO(g.deadline), new Date()), 1) : null
             const need = mLeft ? left / mLeft : null
-            const pace = months.slice(-3).reduce((a, m) => a + data.transactions.filter((t) => t.goal_id === g.id && t.paid && t.date >= m.start && t.date <= m.end).reduce((x, t) => x + t.amount, 0), 0) / 3
+            const pace = months.slice(-3).reduce((a, m) => a + data.transactions.filter((t) => t.goal_id === g.id && t.kind === 'investment' && isDone(t, today) && t.date >= m.start && t.date <= m.end).reduce((x, t) => x + t.amount, 0), 0) / 3
             const eta = pace > 0 && left > 0 ? Math.ceil(left / pace) : null
             return (
               <Card key={g.id} delay={220 + i * 40}>

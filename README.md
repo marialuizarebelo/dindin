@@ -60,21 +60,22 @@ Abra o site no Safari (iPhone) ou Chrome (Android) → *Adicionar à tela de in�
 - Backup: *Ajustes → Backup completo (JSON)* e *Exportar planilha (CSV)*.
 
 ## Como funciona
-- **Lançamento:** receita (com *origem*), despesa (*fixa* ou *variável*, com categoria) ou investimento
-  (opcionalmente ligado a uma meta). Data futura vira *pendente* até você marcar como pago.
-- **Fixos que se repetem** (Planejamento): cadastre uma vez; o app lança o mês atual e o próximo.
-  Se você apagar um lançamento gerado, ele não volta.
+- **Lançamento rápido:** receita, despesa, transferência ou caixinha. O valor aceita conta (`12,50+30`). Escolha **conta ou cartão**, **grupo** (Casa, Minhas, Lucas, Mãe…), data com atalhos, tags e observação. Os **modelos** de 1 toque ficam no topo.
+- **Parcelado ou fixo:** *Parcelada* divide a compra (valor total ou da parcela, até parcelas de valores diferentes) e cada parcela cai na fatura certa. *Fixa* repete por dia, semana, mês ou ano, a cada N, para sempre, N vezes ou até uma data, com opção de **valor estimado** (luz, água). Ao editar ou apagar, escolha *só esta*, *esta e as próximas* ou *todas*.
+- **Contas e cartões:** conta corrente, poupança, carteira e **vale/benefício** (ex.: iFood), cada uma com saldo. Cartões (o seu e de outras pessoas) com limite, fechamento, vencimento, **fatura** por mês e botão de pagar. Compras a partir do dia de fechamento entram na fatura seguinte.
+- **Caixinhas:** várias, com **aporte, resgate e rendimento**, total investido, rendimento (R$ e %) e evolução. *Atualizar pelo saldo do app do banco* registra a diferença como rendimento.
+- **Dívidas em 3 etapas:** *a negociar* → *em pagamento* → *quitada* (histórico). *Negociar* cria as parcelas (ou um pagamento mensal até quitar) na agenda. O empréstimo de familiar entra como dívida em pagamento, sem juros.
+- **Agenda:** calendário de vencimentos e recebimentos e **previsão de saldo** de 30/60/90 dias, com aviso se o saldo for ficar negativo.
+- **Início:** leituras em linguagem simples, contas, cartões, caixinhas, quanto já está comprometido nos próximos meses e gastos por grupo.
 - **Metas:** o progresso soma o “já tenho” + os aportes ligados à meta.
-- **Dívidas:** saldo = saldo informado − pagamentos registrados desde a data do saldo. Quando o banco
-  informar um novo saldo (com juros), use *Editar* e atualize. O simulador compara
-  *maior juros primeiro* × *menor saldo primeiro*.
 - **Planilha:** categorias × dias/meses; clique numa célula para ver os lançamentos.
-- **“Como você está este mês”:** leituras calculadas (sem IA) sobre ritmo de gastos, projeção do mês
-  e quanto dá pra gastar por dia.
+
+## Atualizando um banco que já existe
+Se você instalou a versão anterior, rode **`supabase/migrations/002_contas_cartoes_caixinhas.sql`** no SQL Editor (preserva os dados e pode ser repetido). Para instalação do zero, use `supabase/schema.sql`.
 
 ## Scripts
-`npm run dev` · `npm run build` · `npm test` (período, parser de valores e simulador de dívidas)
+`npm run dev` · `npm run build` · `npm test` (período, calculadora, parcelas, repetição, fatura, saldo, caixinhas, previsão e dívidas)
 
 ## Próximos passos possíveis
-Cartão de crédito com fatura e fechamento · importar extrato (OFX/CSV) · lançar por mensagem ·
-detecção de assinaturas esquecidas · orçamento por envelopes.
+Importar extrato (OFX/CSV) com categorização automática · relatórios comparativos mês a mês ·
+detecção de assinaturas esquecidas · lembretes de vencimento · reembolsos entre pessoas.

@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Download, LogOut, Plus } from 'lucide-react'
 import { Icon } from '../components/Icon'
+import { GroupForm } from '../components/EntityForms'
 import { PALETTES, saveName, setPalette, useName, usePalette } from '../lib/prefs'
 import { useStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
 import { COLOR_KEYS } from '../lib/colors'
+import { money } from '../lib/format'
 import { Card, ColorPick, ConfirmButton, IconPick, Field, PageTitle, Sheet, Tag } from '../components/ui'
-import type { Category, ColorKey, Source } from '../lib/types'
+import type { Category, ColorKey, Group, Source } from '../lib/types'
 
 function download(name: string, text: string, type: string) {
   const url = URL.createObjectURL(new Blob([text], { type }))
@@ -18,23 +20,25 @@ function download(name: string, text: string, type: string) {
 }
 
 export default function Settings() {
-  const { data, demo, loadDemo, wipe, notify } = useStore()
+  const { data, demo, loadDemo, wipe, notify, remove } = useStore()
   const [catEdit, setCatEdit] = useState<Category | 'new-expense' | 'new-investment' | null>(null)
   const [srcEdit, setSrcEdit] = useState<Source | 'new' | null>(null)
+  const [groupEdit, setGroupEdit] = useState<Group | 'new' | null>(null)
   const [pw, setPw] = useState('')
   const palette = usePalette()
   const savedName = useName()
   const [name, setName] = useState(savedName)
 
   const exportCsv = () => {
-    const cat = new Map(data.categories.map((c) => [c.id, c.name]))
-    const src = new Map(data.sources.map((s) => [s.id, s.name]))
-    const rows = [['data', 'tipo', 'descricao', 'valor', 'categoria_ou_origem', 'natureza', 'pago'],
+    const name = (m: { id: string; name: string }[]) => new Map(m.map((x) => [x.id, x.name]))
+    const cat = name(data.categories), src = name(data.sources), acc = name(data.accounts), crd = name(data.cards), grp = name(data.groups), vlt = name(data.vaults)
+    const rows = [['data', 'tipo', 'descricao', 'parcela', 'valor', 'categoria_ou_origem', 'conta', 'cartao', 'caixinha', 'grupo', 'natureza', 'tags', 'pago', 'observacao'],
       ...[...data.transactions].sort((a, b) => (a.date < b.date ? -1 : 1)).map((t) => [
-        t.date, t.kind, t.description, String(t.amount).replace('.', ','),
-        (t.kind === 'income' ? src.get(t.source_id ?? '') : cat.get(t.category_id ?? '')) ?? '', t.nature ?? '', t.paid ? 'sim' : 'nao'])]
+        t.date, t.kind, t.description, t.installment_total ? `${t.installment_no}/${t.installment_total}` : '', String(t.amount).replace('.', ','),
+        (t.kind === 'income' ? src.get(t.source_id ?? '') : cat.get(t.category_id ?? '')) ?? '', acc.get(t.account_id ?? '') ?? '', crd.get(t.card_id ?? '') ?? '',
+        vlt.get(t.vault_id ?? '') ?? '', grp.get(t.group_id ?? '') ?? '', t.nature ?? '', t.tags.join(' '), t.paid ? 'sim' : 'nao', t.note])]
     const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\n')
-    download('dindin-lancamentos.csv', '﻿' + csv, 'text/csv;charset=utf-8')
+    download('dindin-lancamentos.csv', '\uFEFF' + csv, 'text/csv;charset=utf-8')
   }
 
   const changePw = async () => {
@@ -112,6 +116,34 @@ export default function Settings() {
           <p className="text-[12.5px] text-ink2 mb-0 mt-3">Cada receita pode ter uma origem — assim você vê de onde vem cada real.</p>
         </Card>
 
+        <Card delay={80}>
+          <div className="flex items-center justify-between mb-3">
+            <div className="font-semibold text-[16px]">Grupos</div>
+            <button className="btn btn-sm" onClick={() => setGroupEdit('new')}><Plus size={14} /> Novo</button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {data.groups.map((g) => (
+              <button key={g.id} className="bg-transparent border-0 p-0" onClick={() => setGroupEdit(g)}><Tag color={g.color} className="!text-[13.5px] !py-1 !px-2.5"><Icon name={g.icon} size={14} /> {g.name}</Tag></button>
+            ))}
+          </div>
+          <p className="text-[12.5px] text-ink2 mb-0 mt-3">Use para separar quem gasta ou de quem é a conta: Casa, Minhas, Lucas, Mãe… Aparece em cada lançamento e no resumo “Por grupo”.</p>
+        </Card>
+
+        <Card delay={90}>
+          <div className="font-semibold text-[16px] mb-1">Modelos (lançamento de 1 toque)</div>
+          <p className="text-[12.5px] text-ink2 mt-0 mb-3">Crie ao lançar, marcando “Salvar como modelo”. Aparecem no topo do novo lançamento.</p>
+          {data.templates.length === 0 ? <div className="text-ink3 text-sm">Nenhum modelo ainda.</div> : (
+            <div className="flex flex-col">
+              {data.templates.map((t) => (
+                <div key={t.id} className="flex items-center justify-between py-2 border-b border-hair last:border-0 text-[14px]">
+                  <span>{t.name}{t.amount ? <span className="text-ink2"> · {money(t.amount)}</span> : null}</span>
+                  <ConfirmButton className="btn-sm" onConfirm={() => remove('templates', [t.id])}>Apagar</ConfirmButton>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+
         <Card delay={100}>
           <div className="font-semibold text-[16px] mb-3">Seus dados</div>
           <div className="flex gap-2 flex-wrap">
@@ -138,6 +170,7 @@ export default function Settings() {
         </Card>
       </div>
       {catEdit && <CategoryForm cat={typeof catEdit === 'string' ? undefined : catEdit} kind={typeof catEdit === 'string' ? (catEdit === 'new-investment' ? 'investment' : 'expense') : catEdit.kind} onClose={() => setCatEdit(null)} />}
+      {groupEdit && <GroupForm group={groupEdit === 'new' ? undefined : groupEdit} onClose={() => setGroupEdit(null)} />}
       {srcEdit && <SourceForm src={srcEdit === 'new' ? undefined : srcEdit} onClose={() => setSrcEdit(null)} />}
     </>
   )

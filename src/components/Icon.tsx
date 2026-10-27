@@ -1,9 +1,9 @@
 import {
-  Baby, Bird, BookOpen, Briefcase, Bus, Car, Check, Circle, Clapperboard, Coffee, Coins, CreditCard,
+  Baby, Bird, BookOpen, CalendarDays, Briefcase, Bus, Car, Check, Circle, Clapperboard, Coffee, Coins, CreditCard,
   Dumbbell, Flower2, Gem, Gift, GraduationCap, HandCoins, Heart, HeartPulse, House, KeyRound, Landmark,
   Laptop, Leaf, Lightbulb, Music, PawPrint, PenLine, PiggyBank, Plane, Receipt, Repeat, Scissors, Search,
   ShieldCheck, Shirt, ShoppingBag, ShoppingCart, Smartphone, Sparkles, Sprout, Star, SlidersHorizontal,
-  Target, TreePalm, TrendingUp, Umbrella, Utensils, Wallet, Wifi, Wine, type LucideIcon,
+  Smile, Target, TreePalm, TrendingUp, Umbrella, User, Users, Utensils, Wallet, Wifi, Wine, type LucideIcon,
 } from 'lucide-react'
 import { solid } from '../lib/colors'
 import type { ColorKey } from '../lib/types'
@@ -17,9 +17,9 @@ export const PICKABLE: Record<string, LucideIcon> = {
   paw: PawPrint, coffee: Coffee, dumbbell: Dumbbell, scissors: Scissors, gem: Gem, bus: Bus, wifi: Wifi,
   music: Music, book: BookOpen, umbrella: Umbrella, target: Target, palm: TreePalm, key: KeyRound,
   laptop: Laptop, receipt: Receipt, 'hand-coins': HandCoins, shirt: Shirt, wine: Wine, leaf: Leaf,
-  sprout: Sprout, heart: Heart, star: Star,
+  sprout: Sprout, heart: Heart, star: Star, user: User, users: Users, smile: Smile,
 }
-const INTERNAL: Record<string, LucideIcon> = { circle: Circle, search: Search, check: Check, sliders: SlidersHorizontal, repeat: Repeat, pen: PenLine, bird: Bird }
+const INTERNAL: Record<string, LucideIcon> = { calendar: CalendarDays, circle: Circle, search: Search, check: Check, sliders: SlidersHorizontal, repeat: Repeat, pen: PenLine, bird: Bird }
 const ALL = { ...PICKABLE, ...INTERNAL }
 export const ICON_KEYS = Object.keys(PICKABLE)
 

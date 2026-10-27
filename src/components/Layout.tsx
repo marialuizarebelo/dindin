@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
-  CalendarCheck, Eye, EyeOff, Landmark, LayoutDashboard, ListOrdered, Moon, MoreHorizontal, Plus,
+  CalendarCheck, CalendarDays, CreditCard, Eye, EyeOff, Landmark, LayoutDashboard, ListOrdered, Moon, MoreHorizontal, PiggyBank, Plus,
   Settings as SettingsIcon, Sun, Table2, Target,
 } from 'lucide-react'
 import { useStore } from '../lib/store'
@@ -11,9 +11,12 @@ import { useTxSheet } from './TxSheet'
 const NAV = [
   { to: '/', label: 'Início', icon: LayoutDashboard },
   { to: '/lancamentos', label: 'Lançamentos', icon: ListOrdered },
+  { to: '/agenda', label: 'Agenda e previsão', icon: CalendarDays },
+  { to: '/contas', label: 'Contas e cartões', icon: CreditCard },
+  { to: '/caixinhas', label: 'Caixinhas', icon: PiggyBank },
   { to: '/planilha', label: 'Planilha', icon: Table2 },
   { to: '/planejamento', label: 'Planejamento', icon: CalendarCheck },
-  { to: '/metas', label: 'Metas e investimentos', icon: Target },
+  { to: '/metas', label: 'Metas', icon: Target },
   { to: '/dividas', label: 'Dívidas', icon: Landmark },
   { to: '/ajustes', label: 'Ajustes', icon: SettingsIcon },
 ]
@@ -91,7 +94,7 @@ export default function Layout() {
         <button className="btn btn-primary w-full mb-4 !h-11 !rounded-[14px]" onClick={() => open()}>
           <Plus size={18} /> Novo lançamento <kbd className="ml-1 text-[11px] opacity-70 border border-white/40 rounded px-1">N</kbd>
         </button>
-        <nav className="flex flex-col gap-0.5">
+        <nav className="flex flex-col gap-0.5 min-h-0 overflow-y-auto no-scrollbar">
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.to === '/'}
               className={({ isActive }) => cx('side-link', isActive && 'is-active')}>
@@ -132,7 +135,7 @@ export default function Layout() {
           style={{ background: 'linear-gradient(180deg, var(--accent-hi), var(--accent))', boxShadow: '0 10px 24px color-mix(in srgb, var(--accent) 45%, transparent), inset 0 1px 0 rgba(255,255,255,.4)' }}>
           <Plus size={28} strokeWidth={2.4} />
         </button>
-        <Tab to="/planejamento" icon={CalendarCheck} label="Plano" />
+        <Tab to="/agenda" icon={CalendarDays} label="Agenda" />
         <button onClick={() => setMore(true)} className="flex flex-col items-center gap-0.5 bg-transparent border-0 text-[11px] font-medium" style={{ color: 'var(--side-ink-2)' }}>
           <MoreHorizontal size={22} strokeWidth={1.9} /> Mais
         </button>
@@ -140,7 +143,7 @@ export default function Layout() {
 
       <Sheet open={more} onClose={() => setMore(false)} title="Mais">
         <div className="grid grid-cols-2 gap-2.5 pb-2">
-          {NAV.filter((n) => ['/planilha', '/metas', '/dividas', '/ajustes'].includes(n.to)).map((n) => (
+          {NAV.filter((n) => !['/', '/lancamentos', '/agenda'].includes(n.to)).map((n) => (
             <NavLink key={n.to} to={n.to} className="glass rounded-2xl p-4 flex flex-col gap-2 no-underline text-ink">
               <n.icon size={22} strokeWidth={1.8} className="text-accent" />
               <span className="font-semibold text-[14.5px]">{n.label}</span>

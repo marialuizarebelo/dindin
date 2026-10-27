@@ -105,7 +105,7 @@ export function BarChart({ labels, series, height = 230 }: { labels: string[]; s
 }
 
 /** Linhas com area suave (evolucao do saldo / patrimonio). */
-export function LineChart({ labels, series, height = 230 }: { labels: string[]; series: Series[]; height?: number }) {
+export function LineChart({ labels, series, height = 230, fit = false }: { labels: string[]; series: Series[]; height?: number; fit?: boolean }) {
   const [ref, w] = useWidth<HTMLDivElement>()
   const [hover, setHover] = useState<number | null>(null)
   const uid = useId().replace(/:/g, '')
@@ -115,8 +115,17 @@ export function LineChart({ labels, series, height = 230 }: { labels: string[]; 
   const all = series.flatMap((s) => s.values)
   const rawMax = Math.max(0, ...all)
   const rawMin = Math.min(0, ...all)
-  const max = niceMax(rawMax || 1)
-  const min = rawMin < 0 ? -niceMax(-rawMin) : 0
+  let max = niceMax(rawMax || 1)
+  let min = rawMin < 0 ? -niceMax(-rawMin) : 0
+  if (fit && all.length) {
+    // aproxima o eixo dos dados: assim a variacao aparece em vez de uma linha reta
+    const lo = Math.min(...all), hi = Math.max(...all)
+    const pad = (hi - lo) * 0.18 || Math.max(Math.abs(hi) * 0.1, 100)
+    const step = niceMax(((hi - lo) + 2 * pad) / 4)
+    min = Math.floor((lo - pad) / step) * step
+    max = Math.ceil((hi + pad) / step) * step
+    if (min < 0 && lo >= 0) min = 0
+  }
   const n = labels.length
   const x = (i: number) => padL + (n <= 1 ? innerW / 2 : (innerW * i) / (n - 1))
   const y = (v: number) => padT + innerH - ((v - min) / (max - min || 1)) * innerH
