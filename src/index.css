@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- tokens ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f6f5f3;
+  --ink: #1d1d1f;
+  --ink-2: rgba(60, 60, 67, 0.64);
+  --ink-3: rgba(60, 60, 67, 0.4);
+  --hair: rgba(60, 60, 67, 0.1);
+  --glass: rgba(255, 255, 255, 0.58);
+  --glass-strong: rgba(255, 255, 255, 0.82);
+  --glass-edge: rgba(255, 255, 255, 0.8);
+  --sheet: rgba(252, 251, 250, 0.95);
+  --surface: rgba(255, 255, 255, 0.72);
+  --field: rgba(120, 120, 135, 0.09);
+  --shadow: 0 1px 2px rgba(30, 30, 60, 0.04), 0 10px 32px rgba(50, 50, 100, 0.08);
+  --shadow-lg: 0 20px 60px rgba(40, 40, 90, 0.18);
+  --accent: #5b7cf5;
+  --accent-soft: rgba(91, 124, 245, 0.12);
+  --blob-1: rgba(176, 150, 250, 0.34);
+  --blob-2: rgba(255, 190, 140, 0.34);
+  --blob-3: rgba(120, 225, 190, 0.26);
+  --blob-4: rgba(130, 190, 255, 0.32);
+
+  --c-gray: #9b9a97; --c-brown: #b08968; --c-orange: #f0a050; --c-yellow: #e9c24c; --c-green: #5fba8c;
+  --c-teal: #4fb6b2; --c-blue: #5b9cf2; --c-purple: #9d7ee8; --c-pink: #ee80b3; --c-red: #ef7471;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { --dark: 1; }
+}
+:root[data-theme='dark'], :root:not([data-theme='light']) {
+  /* so aplica de fato abaixo, via media/atributo */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0d0d11; --ink: #f5f5f7; --ink-2: rgba(235, 235, 245, 0.62); --ink-3: rgba(235, 235, 245, 0.36);
+    --hair: rgba(255, 255, 255, 0.08); --glass: rgba(40, 40, 50, 0.5); --glass-strong: rgba(34, 34, 42, 0.82);
+    --glass-edge: rgba(255, 255, 255, 0.09); --sheet: rgba(26, 26, 32, 0.95); --surface: rgba(255, 255, 255, 0.06); --field: rgba(255, 255, 255, 0.07);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --accent: #8aa0ff; --accent-soft: rgba(138, 160, 255, 0.16);
+    --blob-1: rgba(120, 90, 220, 0.28); --blob-2: rgba(220, 120, 70, 0.16);
+    --blob-3: rgba(40, 170, 130, 0.16); --blob-4: rgba(60, 120, 230, 0.22);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0d0d11; --ink: #f5f5f7; --ink-2: rgba(235, 235, 245, 0.62); --ink-3: rgba(235, 235, 245, 0.36);
+  --hair: rgba(255, 255, 255, 0.08); --glass: rgba(40, 40, 50, 0.5); --glass-strong: rgba(34, 34, 42, 0.82);
+  --glass-edge: rgba(255, 255, 255, 0.09); --sheet: rgba(26, 26, 32, 0.95); --surface: rgba(255, 255, 255, 0.06); --field: rgba(255, 255, 255, 0.07);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --accent: #8aa0ff; --accent-soft: rgba(138, 160, 255, 0.16);
+  --blob-1: rgba(120, 90, 220, 0.28); --blob-2: rgba(220, 120, 70, 0.16);
+  --blob-3: rgba(40, 170, 130, 0.16); --blob-4: rgba(60, 120, 230, 0.22);
+}
+
+/* ---------- base ---------- */
+html, body, #root { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+/* manchas de cor suaves por tras do vidro */
+body::before {
+  content: '';
+  position: fixed; inset: -10%;
+  z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(42% 38% at 8% 6%, var(--blob-1), transparent 70%),
+    radial-gradient(38% 34% at 94% 4%, var(--blob-2), transparent 70%),
+    radial-gradient(40% 40% at 4% 96%, var(--blob-3), transparent 70%),
+    radial-gradient(44% 40% at 96% 92%, var(--blob-4), transparent 70%);
+  filter: blur(30px);
+}
+#root { position: relative; z-index: 1; }
+::selection { background: var(--accent-soft); }
+* { scrollbar-width: thin; scrollbar-color: var(--ink-3) transparent; }
+button { font: inherit; color: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+.num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.hide-money .money { filter: blur(7px); user-select: none; }
+
+/* ---------- vidro ---------- */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(28px) saturate(1.7);
+  backdrop-filter: blur(28px) saturate(1.7);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.glass-strong {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  backdrop-filter: blur(40px) saturate(1.8);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow-lg);
+}
+.glass-sheet {
+  background: var(--sheet);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  backdrop-filter: blur(40px) saturate(1.8);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow-lg);
+}
+.card { border-radius: 22px; padding: 18px 20px; }
+@media (max-width: 640px) { .card { padding: 16px; border-radius: 20px; } }
+
+/* ---------- controles ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 38px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--hair);
+  background: var(--surface); font-weight: 500; font-size: 14px;
+  transition: transform .12s ease, background .15s ease, box-shadow .15s ease;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--glass-strong); }
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: .5; pointer-events: none; }
+.btn-primary {
+  color: #fff; border-color: transparent;
+  background: linear-gradient(180deg, #7d95fb, #5b7cf5);
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 16px rgba(91, 124, 245, .32);
+}
+.btn-primary:hover { background: linear-gradient(180deg, #8aa0fc, #6784f6); }
+.btn-danger { color: var(--c-red); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover { background: var(--field); }
+.btn-icon { width: 38px; padding: 0; }
+.btn-sm { height: 32px; padding: 0 10px; border-radius: 10px; font-size: 13px; }
+
+.input {
+  width: 100%; height: 42px; padding: 0 12px; border-radius: 12px; border: 1px solid transparent;
+  background: var(--field); outline: none; transition: border-color .15s, background .15s, box-shadow .15s;
+}
+.input::placeholder { color: var(--ink-3); }
+.input:focus { background: var(--surface); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239b9a97' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+.label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-2); margin: 0 0 6px 2px; }
+
+/* segmented control estilo iOS */
+.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--field); border-radius: 12px; }
+.seg > button {
+  height: 32px; padding: 0 12px; border-radius: 9px; border: 0; background: transparent;
+  font-size: 13px; font-weight: 500; color: var(--ink-2); transition: all .18s ease; white-space: nowrap;
+}
+.seg > button[aria-pressed='true'] {
+  background: var(--glass-strong); color: var(--ink);
+  box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.05);
+}
+.seg-full { display: flex; width: 100%; } .seg-full > button { flex: 1; }
+
+/* etiquetas estilo Notion: cor derivada de --c */
+.tag {
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 8px;
+  font-size: 12.5px; font-weight: 500; line-height: 1.5; white-space: nowrap;
+  background: color-mix(in srgb, var(--c) 17%, transparent);
+  color: color-mix(in srgb, var(--c) 62%, var(--ink));
+}
+.dot { width: 8px; height: 8px; border-radius: 99px; background: var(--c); display: inline-block; flex: none; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border-radius: 99px;
+  border: 1px solid var(--hair); background: var(--surface); font-size: 13.5px; transition: all .15s;
+}
+.chip[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--c, var(--accent)) 55%, transparent);
+  background: color-mix(in srgb, var(--c, var(--accent)) 16%, transparent);
+  font-weight: 600;
+}
+
+.progress { height: 8px; border-radius: 99px; background: var(--field); overflow: hidden; }
+.progress > i { display: block; height: 100%; border-radius: 99px; background: var(--c, var(--accent)); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+
+hr.hair { border: 0; border-top: 1px solid var(--hair); }
+
+/* ---------- tabelas (planilha) ---------- */
+.sheet { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13.5px; }
+.sheet th, .sheet td { padding: 8px 10px; white-space: nowrap; text-align: right; border-bottom: 1px solid var(--hair); }
+.sheet th:first-child, .sheet td:first-child { text-align: left; position: sticky; left: 0; z-index: 2; }
+.sheet thead th { position: sticky; top: 0; z-index: 3; font-weight: 600; color: var(--ink-2); font-size: 12px; text-transform: capitalize; background: var(--glass-strong); }
+.sheet td:first-child { background: var(--glass-strong); }
+.sheet tbody tr:hover td { background: color-mix(in srgb, var(--accent) 6%, var(--glass-strong)); }
+.sheet .group td { background: var(--field); font-weight: 600; font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; }
+.sheet .total td { font-weight: 600; background: var(--glass-strong); }
+.sheet th:last-child, .sheet td:last-child { position: sticky; right: 0; z-index: 2; background: var(--glass-strong); box-shadow: -8px 0 12px -8px rgba(0,0,0,.08); }
+.sheet thead th:last-child { z-index: 4; }
+.sheet thead th:first-child { z-index: 4; }
+.sheet td.cell { cursor: pointer; }
+@media (max-width: 640px) {
+  /* no celular so a 1a coluna fica fixa; o Total rola junto, senao sobra so 1 dia na tela */
+  .sheet th:last-child, .sheet td:last-child { position: static; box-shadow: none; }
+  .sheet th:first-child, .sheet td:first-child { min-width: 116px !important; max-width: 116px; overflow: hidden; text-overflow: ellipsis; }
+  .sheet th, .sheet td { padding: 8px 8px; }
+}
+.sheet td.zero { color: var(--ink-3); }
+
+/* ---------- animacoes ---------- */
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes sheet-up { from { opacity: 0; transform: translateY(28px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.fade-up { animation: fade-up .45s cubic-bezier(.2,.8,.2,1) both; }
+.sheet-in { animation: sheet-up .32s cubic-bezier(.2,.9,.25,1) both; }
+.fade-in { animation: fade .2s ease both; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+.safe-b { padding-bottom: max(env(safe-area-inset-bottom), 8px); }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
