@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { cloudAdapter, localAdapter, type Adapter } from './db'
 import { cloudEnabled } from './supabase'
 import { defaultCategories, defaultSources, demoData } from './seed'
-import { uid } from './format'
+import { setMasked, uid } from './format'
 import { clampDay, monthKey, nextMonthKey, todayISO } from './period'
 import type { Data, Recurring, TableName, Transaction } from './types'
 import { emptyData } from './types'
@@ -49,6 +49,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   })
   const dataRef = useRef(data)
   dataRef.current = data
+  setMasked(hidden) // antes dos filhos renderizarem: money()/compact() ja saem mascarados
 
   const notify = useCallback((text: string, tone: Toast['tone'] = 'ok') => {
     const id = Date.now() + Math.random()

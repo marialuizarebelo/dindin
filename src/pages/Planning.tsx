@@ -173,7 +173,7 @@ function PlanCell({ title, v, color, strong }: { title: string; v: number; color
   return (
     <div className="rounded-2xl px-3.5 py-3" style={{ background: `color-mix(in srgb, ${solid(color)} ${strong ? 20 : 12}%, transparent)` }}>
       <div className="text-[12px] text-ink2 font-medium">{title}</div>
-      <div className={`money num font-bold ${strong ? 'text-[22px]' : 'text-[18px]'}`}>{money(v)}</div>
+      <div className={`money num font-display ${strong ? 'text-[26px]' : 'text-[21px]'}`}>{money(v)}</div>
     </div>
   )
 }

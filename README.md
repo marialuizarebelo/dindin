@@ -21,7 +21,7 @@ Em *Ajustes* há um botão para carregar dados de exemplo.
 ## Colocar no ar com login (≈15 min)
 
 ### 1. Supabase (banco + login)
-1. Crie um projeto em [supabase.com](https://supabase.com) (plano gratuito serve).
+1. Crie um projeto em [supabase.com](https://supabase.com) (plano gratuito serve; região *South America (São Paulo)*).
 2. **SQL Editor → New query**, cole o conteúdo de [`supabase/schema.sql`](supabase/schema.sql) e rode.
 3. **Authentication → Users → Add user**: crie o seu usuário (e-mail + senha com 8+ caracteres).
 4. **Authentication → Sign In / Providers → Email**: desative **“Allow new users to sign up”**.
@@ -43,6 +43,13 @@ Na Vercel: *Settings → Domains*. No Hostinger, aponte o DNS como a Vercel indi
 
 ### 4. Instalar no celular
 Abra o site no Safari (iPhone) ou Chrome (Android) → *Adicionar à tela de início*.
+
+## Aparência
+- **3 paletas** (Ajustes → Aparência): *Musgo* (padrão), *Lilás* e *Névoa*. Cada uma define fundo, tinta, menu lateral e cor de destaque; as cores das categorias são comuns.
+- **Modo noturno / diurno** e **ocultar valores** ficam no menu lateral (no celular, na pílula do topo). Ocultar troca *todo* valor em reais por `••••` (textos, gráficos, dicas e avisos). Janelas de edição mostram o valor, porque é preciso editá-lo.
+- **Tipografia:** títulos e números grandes em *AV Estiana*; o resto em sans do sistema (San Francisco no iPhone) com Inter de reserva.
+
+> **Licença da fonte:** a AV Estiana veio com licença *Desktop Commercial* (uso pessoal e comercial, **não vale para logotipo**; uso na web não é citado). Por isso o logo “dindin” usa a sans. Se o app for compartilhado com outras pessoas, peça licença web ao autor (`altvieroffice@gmail.com`). Mantenha este repositório **privado** enquanto a fonte estiver em `public/fonts/`.
 
 ## Segurança
 - Login por e-mail/senha (Supabase Auth), sessão renovada automaticamente.

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Download, LogOut, Plus } from 'lucide-react'
 import { Icon } from '../components/Icon'
-import { saveName, useName } from '../lib/prefs'
+import { PALETTES, saveName, setPalette, useName, usePalette } from '../lib/prefs'
 import { useStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
 import { COLOR_KEYS } from '../lib/colors'
@@ -22,6 +22,7 @@ export default function Settings() {
   const [catEdit, setCatEdit] = useState<Category | 'new-expense' | 'new-investment' | null>(null)
   const [srcEdit, setSrcEdit] = useState<Source | 'new' | null>(null)
   const [pw, setPw] = useState('')
+  const palette = usePalette()
   const savedName = useName()
   const [name, setName] = useState(savedName)
 
@@ -47,6 +48,26 @@ export default function Settings() {
     <>
       <PageTitle title="Ajustes" />
       <div className="grid gap-4 lg:grid-cols-2">
+        <Card delay={0} className="lg:col-span-2">
+          <div className="font-semibold text-[16px] mb-1">Aparência</div>
+          <p className="text-[12.5px] text-ink2 mt-0 mb-3">Escolha a paleta. O claro/escuro fica no ícone de lua, no topo.</p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {PALETTES.map((p) => (
+              <button key={p.id} type="button" onClick={() => setPalette(p.id)} aria-pressed={palette === p.id}
+                className="text-left rounded-2xl p-3 bg-transparent border-2 transition-colors"
+                style={{ borderColor: palette === p.id ? 'var(--accent)' : 'var(--hair)' }}>
+                <div className="flex h-12 rounded-xl overflow-hidden mb-2.5">
+                  <i className="flex-[3]" style={{ background: p.swatch[0] }} />
+                  <i className="flex-[1.4]" style={{ background: p.swatch[1] }} />
+                  <i className="flex-[1.4]" style={{ background: p.swatch[2] }} />
+                </div>
+                <div className="font-semibold text-[14.5px]">{p.name}</div>
+                <div className="text-[12.5px] text-ink2">{p.hint}</div>
+              </button>
+            ))}
+          </div>
+        </Card>
+
         <Card delay={10} className="lg:col-span-2">
           <div className="font-semibold text-[16px] mb-3">Como quer ser chamada?</div>
           <div className="flex gap-2 max-w-sm">

@@ -14,7 +14,7 @@ import { solid } from '../lib/colors'
 import { BarChart, Donut, LineChart } from '../components/Charts'
 import { PeriodBar, usePeriod } from '../components/PeriodBar'
 import { useTxSheet } from '../components/TxSheet'
-import { Card, Delta, Empty, Money, PageTitle, Progress, Seg, Tag } from '../components/ui'
+import { Card, Delta, Empty, Money, PageTitle, Progress, Seg, Tag, TintCard } from '../components/ui'
 import type { Transaction } from '../lib/types'
 
 export default function Dashboard() {
@@ -130,13 +130,13 @@ export default function Dashboard() {
       {!empty && <Insights />}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
-        <Kpi title="Recebido" value={cur.income} d={delta(cur.income, prev.income)} color="green" delay={40}
+        <Kpi icon="trend" title="Recebido" value={cur.income} d={delta(cur.income, prev.income)} color="green" delay={40}
           foot={cur.pendingIncome > 0 ? `${money(cur.pendingIncome)} ainda a receber` : 'tudo recebido'} />
-        <Kpi title="Gasto" value={cur.expense} d={delta(cur.expense, prev.expense)} invert color="red" delay={80}
+        <Kpi icon="card" title="Gasto" value={cur.expense} d={delta(cur.expense, prev.expense)} invert color="red" delay={80}
           foot={cur.income > 0 ? `${percent(cur.expense / cur.income)} do que recebeu` : undefined} />
-        <Kpi title="Investido" value={cur.investment} d={delta(cur.investment, prev.investment)} color="purple" delay={120}
+        <Kpi icon="piggy" title="Investido" value={cur.investment} d={delta(cur.investment, prev.investment)} color="purple" delay={120}
           foot={cur.income > 0 ? `${percent(cur.investment / cur.income)} da renda` : undefined} />
-        <Kpi title="Sobrou" value={cur.left} d={delta(cur.left, prev.left)} color={cur.left >= 0 ? 'blue' : 'red'} delay={160} strong
+        <Kpi icon="wallet" title="Sobrou" value={cur.left} d={delta(cur.left, prev.left)} color={cur.left >= 0 ? 'yellow' : 'red'} delay={160} strong
           foot={cur.pendingExpense > 0 ? `${money(cur.pendingExpense)} ainda a pagar` : 'tudo em dia'} />
       </div>
 
@@ -282,18 +282,14 @@ export default function Dashboard() {
   }
 }
 
-function Kpi({ title, value, d, color, foot, invert, strong, delay }: {
-  title: string; value: number; d: number | null; color: 'green' | 'red' | 'blue' | 'purple'; foot?: string; invert?: boolean; strong?: boolean; delay: number
+function Kpi({ title, value, d, color, icon, foot, invert, strong, delay }: {
+  title: string; value: number; d: number | null; color: 'green' | 'red' | 'blue' | 'purple' | 'yellow'; icon: string; foot?: string; invert?: boolean; strong?: boolean; delay: number
 }) {
   return (
-    <Card delay={delay} className="!p-4 sm:!p-5">
-      <div className="flex items-center justify-between mb-2">
-        <span className="flex items-center gap-2 text-[13px] text-ink2 font-medium"><i className="dot" style={{ background: solid(color) }} />{title}</span>
-        <Delta value={d} invert={invert} />
-      </div>
-      <div className={`money num font-semibold tracking-tight ${strong ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'}`}>{money(value)}</div>
-      {foot && <div className="text-[12.5px] text-ink2 mt-1">{foot}</div>}
-    </Card>
+    <TintCard color={color} label={title} icon={icon} delay={delay} right={<Delta value={d} invert={invert} />}>
+      <div className={`money num font-display kpi-num ${strong ? 'strong' : ''}`}>{money(value)}</div>
+      {foot && <div className="text-[12.5px] text-ink2 mt-2.5">{foot}</div>}
+    </TintCard>
   )
 }
 
@@ -307,7 +303,7 @@ function Legend({ items }: { items: { name: string; color: string }[] }) {
 
 /** "Como estou?" — leituras do mes atual em linguagem simples. */
 function Insights() {
-  const { data } = useStore()
+  const { data, hidden } = useStore()
   const lines = useMemo(() => {
     const today = todayISO()
     const ym = monthKey(today)
@@ -365,7 +361,7 @@ function Insights() {
       out.push({ icon: late ? <Bell size={17} /> : <CalendarClock size={17} />, tone: late ? 'bad' : 'info', text: <>{late ? <><b>{late} em atraso</b> e </> : null}<b>{soon.length} {soon.length === 1 ? 'conta' : 'contas'}</b> a pagar nos próximos 7 dias: <b className="money">{money(total)}</b>.</> })
     }
     return out
-  }, [data.transactions])
+  }, [data.transactions, hidden])
 
   if (!lines.length) return null
   const tones = { good: 'green', warn: 'orange', bad: 'red', info: 'blue' } as const

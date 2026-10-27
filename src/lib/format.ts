@@ -5,12 +5,18 @@ const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' 
 const brlInt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
 const num = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-export const money = (v: number) => brl.format(v)
-export const moneyInt = (v: number) => brlInt.format(v)
-export const plain = (v: number) => num.format(v)
+/** "Modo discreto": enquanto ligado, todo valor em reais vira pontinhos (texto, graficos, dicas, avisos). */
+let masked = false
+export const setMasked = (v: boolean) => { masked = v }
+export const MASK = '••••'
+
+export const money = (v: number) => (masked ? `R$ ${MASK}` : brl.format(v))
+export const moneyInt = (v: number) => (masked ? `R$ ${MASK}` : brlInt.format(v))
+export const plain = (v: number) => (masked ? MASK : num.format(v))
 
 /** 1.2k, 3,4 mi... para eixos de graficos. */
 export function compact(v: number): string {
+  if (masked) return '••'
   const a = Math.abs(v)
   if (a >= 1_000_000) return `${(v / 1_000_000).toFixed(1).replace('.', ',')} mi`
   if (a >= 10_000) return `${Math.round(v / 1000)} mil`

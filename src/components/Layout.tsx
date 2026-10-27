@@ -21,8 +21,8 @@ const NAV = [
 function Brand() {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="h-8 w-8 rounded-[10px] grid place-items-center text-white text-[15px] font-bold" style={{ background: 'linear-gradient(135deg,#efb4c8,#c7aef0)', boxShadow: '0 4px 12px rgba(200,130,170,.38)' }}>d</div>
-      <span className="font-serif text-[22px] font-semibold tracking-tight">dindin</span>
+      <div className="h-8 w-8 rounded-[10px] grid place-items-center text-white text-[16px] font-bold" style={{ background: 'linear-gradient(135deg, var(--accent-hi), var(--accent))', boxShadow: '0 4px 12px color-mix(in srgb, var(--accent) 40%, transparent)' }}>d</div>
+      <span className="text-[20px] font-bold tracking-[-0.03em]">dindin</span>
     </div>
   )
 }
@@ -71,11 +71,13 @@ export default function Layout() {
   }, [open])
 
   const tools: ReactNode = (
-    <div className="flex items-center gap-1">
-      <button className="btn btn-ghost btn-icon" onClick={toggleHidden} aria-label={hidden ? 'Mostrar valores' : 'Esconder valores'} title="Modo discreto">
+    <div className="glass flex items-center gap-0.5 rounded-full p-1">
+      <button className="btn btn-ghost btn-icon !rounded-full" onClick={toggleHidden} aria-pressed={hidden}
+        aria-label={hidden ? 'Mostrar valores' : 'Esconder valores'} title={hidden ? 'Mostrar valores' : 'Esconder valores'}>
         {hidden ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
-      <button className="btn btn-ghost btn-icon" onClick={toggle} aria-label="Alternar tema">
+      <button className="btn btn-ghost btn-icon !rounded-full" onClick={toggle}
+        aria-label={dark ? 'Modo diurno' : 'Modo noturno'} title={dark ? 'Modo diurno' : 'Modo noturno'}>
         {dark ? <Sun size={18} /> : <Moon size={18} />}
       </button>
     </div>
@@ -84,7 +86,7 @@ export default function Layout() {
   return (
     <div className={cx('min-h-dvh', hidden && 'hide-money')}>
       {/* sidebar desktop */}
-      <aside className="hidden lg:flex fixed left-4 top-4 bottom-4 w-[244px] glass rounded-[26px] flex-col p-4 z-20">
+      <aside className="hidden lg:flex fixed left-4 top-4 bottom-4 w-[244px] sidebar rounded-[28px] flex-col p-4 z-20">
         <div className="px-2 pt-1 pb-5"><Brand /></div>
         <button className="btn btn-primary w-full mb-4 !h-11 !rounded-[14px]" onClick={() => open()}>
           <Plus size={18} /> Novo lançamento <kbd className="ml-1 text-[11px] opacity-70 border border-white/40 rounded px-1">N</kbd>
@@ -92,23 +94,23 @@ export default function Layout() {
         <nav className="flex flex-col gap-0.5">
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.to === '/'}
-              className={({ isActive }) => cx(
-                'flex items-center gap-3 h-10 px-3 rounded-xl text-[14.5px] font-medium transition-colors no-underline text-ink',
-                isActive ? 'bg-[var(--glass-strong)] shadow-[0_1px_3px_rgba(0,0,0,.08)]' : 'text-ink2 hover:bg-[var(--field)]',
-              )}>
+              className={({ isActive }) => cx('side-link', isActive && 'is-active')}>
               <n.icon size={18} strokeWidth={1.9} /> {n.label}
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto flex items-center justify-between pt-3 border-t border-hair">
-          {demo ? <span className="text-[12px] text-ink2 px-2">Modo demonstração</span> : <span />}
-          {tools}
+        <div className="mt-auto pt-3 border-t border-white/10 flex flex-col gap-1">
+          {demo && <span className="text-[12px] px-3 pb-1" style={{ color: 'var(--side-ink-2)' }}>Modo demonstração</span>}
+          <SwitchRow on={hidden} onClick={toggleHidden} icon={hidden ? <EyeOff size={18} /> : <Eye size={18} />}
+            label="Ocultar valores" hint={hidden ? 'Valores escondidos' : undefined} />
+          <SwitchRow on={dark} onClick={toggle} icon={dark ? <Moon size={18} /> : <Sun size={18} />}
+            label="Modo noturno" />
         </div>
       </aside>
 
       {/* topo mobile */}
       <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),10px)] pb-2"
-        style={{ background: 'linear-gradient(var(--bg), transparent)' }}>
+        style={{ background: 'color-mix(in srgb, var(--bg) 80%, transparent)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
         <Brand />
         {tools}
       </header>
@@ -123,15 +125,15 @@ export default function Layout() {
       </main>
 
       {/* barra inferior mobile */}
-      <nav className="lg:hidden fixed z-40 left-3 right-3 bottom-[max(env(safe-area-inset-bottom),10px)] glass rounded-[26px] h-[64px] grid grid-cols-5 items-center px-1">
+      <nav className="lg:hidden fixed z-40 left-3 right-3 bottom-[max(env(safe-area-inset-bottom),10px)] dock rounded-[28px] h-[66px] grid grid-cols-5 items-center px-1">
         <Tab to="/" icon={LayoutDashboard} label="Início" end />
         <Tab to="/lancamentos" icon={ListOrdered} label="Lançar" />
-        <button onClick={() => open()} aria-label="Novo lançamento" className="mx-auto -mt-6 h-[58px] w-[58px] rounded-full grid place-items-center text-white border-0"
-          style={{ background: 'linear-gradient(180deg,#d395ae,#b5708d)', boxShadow: '0 10px 24px rgba(181,112,141,.45), inset 0 1px 0 rgba(255,255,255,.4)' }}>
+        <button onClick={() => open()} aria-label="Novo lançamento" className="mx-auto -mt-7 h-[58px] w-[58px] rounded-full grid place-items-center text-white border-0"
+          style={{ background: 'linear-gradient(180deg, var(--accent-hi), var(--accent))', boxShadow: '0 10px 24px color-mix(in srgb, var(--accent) 45%, transparent), inset 0 1px 0 rgba(255,255,255,.4)' }}>
           <Plus size={28} strokeWidth={2.4} />
         </button>
         <Tab to="/planejamento" icon={CalendarCheck} label="Plano" />
-        <button onClick={() => setMore(true)} className="flex flex-col items-center gap-0.5 bg-transparent border-0 text-ink2 text-[11px] font-medium">
+        <button onClick={() => setMore(true)} className="flex flex-col items-center gap-0.5 bg-transparent border-0 text-[11px] font-medium" style={{ color: 'var(--side-ink-2)' }}>
           <MoreHorizontal size={22} strokeWidth={1.9} /> Mais
         </button>
       </nav>
@@ -150,9 +152,26 @@ export default function Layout() {
   )
 }
 
+/** Linha do menu lateral com interruptor (ocultar valores / modo noturno). */
+function SwitchRow({ on, onClick, icon, label, hint }: { on: boolean; onClick: () => void; icon: ReactNode; label: string; hint?: string }) {
+  return (
+    <button type="button" onClick={onClick} role="switch" aria-checked={on}
+      className="side-link w-full bg-transparent border-0 text-left cursor-pointer">
+      {icon}
+      <span className="flex-1 min-w-0">
+        <span className="block leading-tight">{label}</span>
+        {hint && <span className="block text-[11.5px] leading-tight opacity-70">{hint}</span>}
+      </span>
+      <span className="relative h-[22px] w-[38px] rounded-full shrink-0 transition-colors" style={{ background: on ? 'var(--accent)' : 'rgba(255,255,255,.22)' }}>
+        <i className="absolute top-[2px] h-[18px] w-[18px] rounded-full bg-white shadow transition-all" style={{ left: on ? 18 : 2 }} />
+      </span>
+    </button>
+  )
+}
+
 function Tab({ to, icon: Icon, label, end }: { to: string; icon: typeof Plus; label: string; end?: boolean }) {
   return (
-    <NavLink to={to} end={end} className={({ isActive }) => cx('flex flex-col items-center gap-0.5 no-underline text-[11px] font-medium', isActive ? 'text-accent' : 'text-ink2')}>
+    <NavLink to={to} end={end} className={({ isActive }) => cx('flex flex-col items-center gap-0.5 no-underline text-[11px] font-medium', isActive ? 'text-[var(--accent-hi)]' : 'text-[var(--side-ink-2)]')}>
       <Icon size={22} strokeWidth={1.9} /> {label}
     </NavLink>
   )

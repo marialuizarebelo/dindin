@@ -16,7 +16,7 @@ export default {
         invest: 'var(--c-purple)',
       },
       fontFamily: {
-        serif: ['Fraunces', 'Georgia', 'serif'],
+        display: ['AV Estiana', 'Inter', 'system-ui', 'sans-serif'],
         sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', 'Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: { '2xl': '1.25rem', '3xl': '1.75rem' },

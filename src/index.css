@@ -2,62 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- fontes ---------- */
+/* AV Estiana: so em titulos e numeros grandes (licenca desktop: nao usar em logotipo). */
+@font-face { font-family: 'AV Estiana'; src: url('/fonts/AVEstiana-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'AV Estiana'; src: url('/fonts/AVEstiana-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+
 /* ---------- tokens ---------- */
-/* Paleta: creme quente, rosé empoeirado, pêssego, lilás e sálvia. Tinta em ameixa-escuro (nunca preto puro). */
+/* Cada paleta define so o "chrome" (fundo, tinta, menu lateral, destaque). As cores de categoria (--c-*) sao comuns. */
+:root, :root[data-palette='musgo'] {
+  --pal-bg: #f4f1e9; --pal-ink: #1d2b26; --pal-side: #1d3830; --pal-accent: #cf7248; --pal-accent-hi: #de8a62;
+  --pal-b1: rgba(150, 195, 168, 0.40); --pal-b2: rgba(240, 206, 150, 0.42); --pal-b3: rgba(236, 165, 132, 0.28); --pal-b4: rgba(170, 208, 208, 0.34);
+  --pal-dbg: #0f1815; --pal-dside: #16241f; --pal-daccent: #e8946e; --pal-dink: #eef2ee;
+  --pal-db1: rgba(60, 140, 110, 0.20); --pal-db2: rgba(200, 150, 80, 0.12); --pal-db3: rgba(200, 100, 70, 0.10); --pal-db4: rgba(60, 130, 140, 0.16);
+}
+:root[data-palette='lilas'] {
+  --pal-bg: #f4f1f7; --pal-ink: #262039; --pal-side: #2b2443; --pal-accent: #dc8456; --pal-accent-hi: #e89a70;
+  --pal-b1: rgba(190, 168, 240, 0.42); --pal-b2: rgba(255, 206, 160, 0.42); --pal-b3: rgba(170, 215, 200, 0.28); --pal-b4: rgba(238, 214, 150, 0.30);
+  --pal-dbg: #131020; --pal-dside: #1b1630; --pal-daccent: #eda278; --pal-dink: #f2eff8;
+  --pal-db1: rgba(120, 90, 210, 0.24); --pal-db2: rgba(220, 130, 90, 0.12); --pal-db3: rgba(70, 150, 140, 0.12); --pal-db4: rgba(190, 150, 70, 0.10);
+}
+:root[data-palette='nevoa'] {
+  --pal-bg: #f1f3f5; --pal-ink: #1c2530; --pal-side: #232c3d; --pal-accent: #6571d8; --pal-accent-hi: #7b86e4;
+  --pal-b1: rgba(150, 175, 225, 0.40); --pal-b2: rgba(200, 180, 240, 0.34); --pal-b3: rgba(165, 215, 205, 0.30); --pal-b4: rgba(240, 215, 175, 0.28);
+  --pal-dbg: #0e1218; --pal-dside: #171d29; --pal-daccent: #9aa5f2; --pal-dink: #eef1f6;
+  --pal-db1: rgba(80, 110, 210, 0.22); --pal-db2: rgba(130, 100, 210, 0.14); --pal-db3: rgba(60, 150, 140, 0.12); --pal-db4: rgba(190, 160, 100, 0.08);
+}
+
 :root {
   color-scheme: light;
-  --bg: #fbf7f4;
-  --ink: #33262e;
-  --ink-2: rgba(84, 62, 74, 0.68);
-  --ink-3: rgba(84, 62, 74, 0.42);
-  --hair: rgba(120, 82, 100, 0.12);
-  --glass: rgba(255, 255, 255, 0.58);
-  --glass-strong: rgba(255, 252, 251, 0.84);
-  --glass-edge: rgba(255, 255, 255, 0.85);
-  --sheet: rgba(254, 251, 249, 0.96);
-  --surface: rgba(255, 255, 255, 0.74);
-  --field: rgba(160, 110, 135, 0.09);
-  --shadow: 0 1px 2px rgba(120, 70, 100, 0.04), 0 12px 34px rgba(150, 90, 120, 0.09);
-  --shadow-lg: 0 24px 64px rgba(110, 60, 90, 0.2);
-  --accent: #b5708d;
-  --accent-soft: rgba(181, 112, 141, 0.15);
-  --blob-1: rgba(244, 172, 200, 0.42);
-  --blob-2: rgba(255, 208, 165, 0.4);
-  --blob-3: rgba(205, 180, 245, 0.34);
-  --blob-4: rgba(165, 218, 203, 0.3);
+  --bg: var(--pal-bg);
+  --ink: var(--pal-ink);
+  --ink-2: color-mix(in srgb, var(--ink) 66%, transparent);
+  --ink-3: color-mix(in srgb, var(--ink) 40%, transparent);
+  --hair: color-mix(in srgb, var(--ink) 11%, transparent);
+  --field: color-mix(in srgb, var(--ink) 6%, transparent);
+  --glass: rgba(255, 255, 255, 0.6);
+  --glass-strong: rgba(255, 255, 254, 0.86);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --sheet: rgba(255, 254, 252, 0.97);
+  --surface: rgba(255, 255, 255, 0.76);
+  --card-solid: #fffdf9;
+  --shadow: 0 1px 2px color-mix(in srgb, var(--ink) 5%, transparent), 0 12px 34px color-mix(in srgb, var(--ink) 9%, transparent);
+  --shadow-lg: 0 24px 64px color-mix(in srgb, var(--ink) 22%, transparent);
+  --accent: var(--pal-accent);
+  --accent-hi: var(--pal-accent-hi);
+  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+  --blob-1: var(--pal-b1); --blob-2: var(--pal-b2); --blob-3: var(--pal-b3); --blob-4: var(--pal-b4);
+  /* menu lateral: sempre escuro, nos dois temas */
+  --side: var(--pal-side);
+  --side-ink: #f4f1ea;
+  --side-ink-2: rgba(244, 241, 234, 0.64);
 
-  --c-gray: #aaa29e; --c-brown: #c6a48f; --c-orange: #efb18d; --c-yellow: #e8cc92; --c-green: #9cc5ad;
-  --c-teal: #8dc4c1; --c-blue: #95aedc; --c-purple: #b9a7de; --c-pink: #e8a8be; --c-red: #e29ba0;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) { --dark: 1; }
-}
-:root[data-theme='dark'], :root:not([data-theme='light']) {
-  /* so aplica de fato abaixo, via media/atributo */
+  --c-gray: #a9a7a0; --c-brown: #bb9a7d; --c-orange: #eaa271; --c-yellow: #e3c16f; --c-green: #84b79a;
+  --c-teal: #7bb8b3; --c-blue: #86a4d4; --c-purple: #a99bd8; --c-pink: #dd9db0; --c-red: #e0868a;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --bg: #171218; --ink: #f7eff3; --ink-2: rgba(246, 232, 240, 0.64); --ink-3: rgba(246, 232, 240, 0.38);
-    --hair: rgba(255, 235, 245, 0.09); --glass: rgba(58, 42, 56, 0.5); --glass-strong: rgba(44, 33, 44, 0.84);
-    --glass-edge: rgba(255, 235, 245, 0.1); --sheet: rgba(32, 25, 34, 0.96); --surface: rgba(255, 235, 245, 0.06); --field: rgba(255, 235, 245, 0.075);
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
-    --accent: #e3a3bd; --accent-soft: rgba(227, 163, 189, 0.17);
-    --blob-1: rgba(190, 90, 140, 0.26); --blob-2: rgba(220, 130, 90, 0.15);
-    --blob-3: rgba(130, 95, 200, 0.22); --blob-4: rgba(60, 150, 140, 0.15);
+    --bg: var(--pal-dbg); --ink: var(--pal-dink);
+    --glass: rgba(255, 255, 255, 0.055); --glass-strong: color-mix(in srgb, var(--pal-dbg) 86%, white);
+    --glass-edge: rgba(255, 255, 255, 0.09); --sheet: color-mix(in srgb, var(--pal-dbg) 93%, white);
+    --surface: rgba(255, 255, 255, 0.06); --card-solid: color-mix(in srgb, var(--pal-dbg) 90%, white);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35); --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --accent: var(--pal-daccent); --accent-hi: var(--pal-daccent);
+    --blob-1: var(--pal-db1); --blob-2: var(--pal-db2); --blob-3: var(--pal-db3); --blob-4: var(--pal-db4);
+    --side: var(--pal-dside);
   }
 }
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #171218; --ink: #f7eff3; --ink-2: rgba(246, 232, 240, 0.64); --ink-3: rgba(246, 232, 240, 0.38);
-    --hair: rgba(255, 235, 245, 0.09); --glass: rgba(58, 42, 56, 0.5); --glass-strong: rgba(44, 33, 44, 0.84);
-    --glass-edge: rgba(255, 235, 245, 0.1); --sheet: rgba(32, 25, 34, 0.96); --surface: rgba(255, 235, 245, 0.06); --field: rgba(255, 235, 245, 0.075);
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
-    --accent: #e3a3bd; --accent-soft: rgba(227, 163, 189, 0.17);
-    --blob-1: rgba(190, 90, 140, 0.26); --blob-2: rgba(220, 130, 90, 0.15);
-    --blob-3: rgba(130, 95, 200, 0.22); --blob-4: rgba(60, 150, 140, 0.15);
+  --bg: var(--pal-dbg); --ink: var(--pal-dink);
+  --glass: rgba(255, 255, 255, 0.055); --glass-strong: color-mix(in srgb, var(--pal-dbg) 86%, white);
+  --glass-edge: rgba(255, 255, 255, 0.09); --sheet: color-mix(in srgb, var(--pal-dbg) 93%, white);
+  --surface: rgba(255, 255, 255, 0.06); --card-solid: color-mix(in srgb, var(--pal-dbg) 90%, white);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35); --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --accent: var(--pal-daccent); --accent-hi: var(--pal-daccent);
+  --blob-1: var(--pal-db1); --blob-2: var(--pal-db2); --blob-3: var(--pal-db3); --blob-4: var(--pal-db4);
+  --side: var(--pal-dside);
 }
 
 /* ---------- base ---------- */
@@ -92,7 +113,6 @@ body::before {
 button { font: inherit; color: inherit; cursor: pointer; }
 input, select, textarea { font: inherit; color: inherit; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-.hide-money .money { filter: blur(7px); user-select: none; }
 
 /* ---------- vidro ---------- */
 .glass {
@@ -132,10 +152,10 @@ input, select, textarea { font: inherit; color: inherit; }
 .btn:disabled { opacity: .5; pointer-events: none; }
 .btn-primary {
   color: #fff; border-color: transparent;
-  background: linear-gradient(180deg, #d395ae, #b5708d);
-  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 16px rgba(181, 112, 141, .32);
+  background: linear-gradient(180deg, var(--accent-hi), var(--accent));
+  box-shadow: 0 1px 0 rgba(255,255,255,.3) inset, 0 6px 16px color-mix(in srgb, var(--accent) 34%, transparent);
 }
-.btn-primary:hover { background: linear-gradient(180deg, #da9fb8, #bd7a96); }
+.btn-primary:hover { filter: brightness(1.05); }
 .btn-danger { color: var(--c-red); }
 .btn-ghost { background: transparent; border-color: transparent; }
 .btn-ghost:hover { background: var(--field); }
@@ -148,7 +168,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .input::placeholder { color: var(--ink-3); }
 .input:focus { background: var(--surface); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a89aa2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
 .label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-2); margin: 0 0 6px 2px; }
 
 /* segmented control estilo iOS */
@@ -207,6 +227,41 @@ hr.hair { border: 0; border-top: 1px solid var(--hair); }
   .sheet th, .sheet td { padding: 8px 8px; }
 }
 .sheet td.zero { color: var(--ink-3); }
+
+/* ---------- cartao colorido (KPIs) ---------- */
+.tint {
+  background: linear-gradient(150deg, color-mix(in srgb, var(--c) 22%, var(--card-solid)), color-mix(in srgb, var(--c) 9%, var(--card-solid)));
+  border: 1px solid color-mix(in srgb, var(--c) 28%, transparent);
+  box-shadow: var(--shadow);
+}
+.kpi-label {
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--c) 52%, var(--ink));
+}
+.kpi-num { font-size: clamp(19px, 5.9vw, 24px); line-height: 1; white-space: nowrap; }
+@media (min-width: 640px) { .kpi-num { font-size: 32px; } .kpi-num.strong { font-size: 36px; } }
+.font-display { font-family: 'AV Estiana', Inter, system-ui, sans-serif; font-weight: 400; }
+
+/* ---------- menu lateral e barra inferior (sempre escuros) ---------- */
+.sidebar {
+  background: var(--side); color: var(--side-ink);
+  box-shadow: 0 18px 50px color-mix(in srgb, var(--side) 45%, transparent), inset 0 1px 0 rgba(255,255,255,.07);
+}
+.side-link {
+  display: flex; align-items: center; gap: 12px; height: 42px; padding: 0 12px; border-radius: 14px;
+  font-size: 14.5px; font-weight: 500; text-decoration: none; color: var(--side-ink-2); transition: background .15s, color .15s;
+}
+.side-link:hover { background: rgba(255,255,255,.07); color: var(--side-ink); }
+.side-link.is-active {
+  color: var(--side-ink); background: rgba(255,255,255,.09);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-hi) 55%, transparent);
+}
+.sidebar .btn-ghost:hover { background: rgba(255,255,255,.09); }
+.dock {
+  background: color-mix(in srgb, var(--side) 94%, transparent); color: var(--side-ink);
+  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--side) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.08);
+}
 
 /* ---------- animacoes ---------- */
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }

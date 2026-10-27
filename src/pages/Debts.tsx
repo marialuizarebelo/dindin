@@ -11,7 +11,7 @@ import { solid, COLOR_KEYS } from '../lib/colors'
 import { simulatePayoff, type Strategy } from '../lib/debt'
 import { LineChart } from '../components/Charts'
 import { useTxSheet } from '../components/TxSheet'
-import { Card, ColorPick, ConfirmButton, Empty, IconPick, Field, PageTitle, Seg, Sheet, Tag } from '../components/ui'
+import { Card, ColorPick, TintCard, ConfirmButton, Empty, IconPick, Field, PageTitle, Seg, Sheet, Tag } from '../components/ui'
 import type { ColorKey, Debt } from '../lib/types'
 
 const monthName = (n: number) => format(addMonths(new Date(), n), 'MMM yyyy', { locale: ptBR })
@@ -49,10 +49,10 @@ export default function Debts() {
       ) : (
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
-            <Stat title="Em aberto" v={money(total)} delay={20} />
-            <Stat title="Mínimos por mês" v={money(minTotal)} delay={60} />
-            <Stat title="Livre das dívidas" v={chosen.feasible && chosen.months > 0 ? monthName(chosen.months) : chosen.feasible ? 'Tudo quitado' : 'Não quita'} delay={100} accent />
-            <Stat title="Juros até lá" v={chosen.feasible ? money(chosen.totalInterest) : '—'} delay={140} />
+            <Stat title="Em aberto" v={money(total)} delay={20} color="red" icon="card" />
+            <Stat title="Mínimos por mês" v={money(minTotal)} delay={60} color="orange" icon="receipt" />
+            <Stat title="Livre das dívidas" v={chosen.feasible && chosen.months > 0 ? monthName(chosen.months) : chosen.feasible ? 'Tudo quitado' : 'Não quita'} delay={100} color="green" icon="sprout" />
+            <Stat title="Juros até lá" v={chosen.feasible ? money(chosen.totalInterest) : '—'} delay={140} color="purple" icon="trend" />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-2 mb-4">
@@ -132,12 +132,11 @@ export default function Debts() {
   )
 }
 
-function Stat({ title, v, delay, accent }: { title: string; v: string; delay: number; accent?: boolean }) {
+function Stat({ title, v, delay, color, icon }: { title: string; v: string; delay: number; color: ColorKey; icon: string }) {
   return (
-    <Card delay={delay} className="!p-4 sm:!p-5">
-      <div className="text-[13px] text-ink2 mb-1">{title}</div>
-      <div className={`money num font-bold capitalize ${accent ? 'text-[21px] sm:text-[24px]' : 'text-[20px] sm:text-[24px]'}`} style={accent ? { color: 'color-mix(in srgb, var(--c-green) 62%, var(--ink))' } : undefined}>{v}</div>
-    </Card>
+    <TintCard color={color} icon={icon} label={title} delay={delay}>
+      <div className="money num font-display kpi-num capitalize">{v}</div>
+    </TintCard>
   )
 }
 

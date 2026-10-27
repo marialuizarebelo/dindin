@@ -10,7 +10,7 @@ import { money, moneyInt, parseMoney, percent } from '../lib/format'
 import { solid, COLOR_KEYS } from '../lib/colors'
 import { BarChart, Donut } from '../components/Charts'
 import { useTxSheet } from '../components/TxSheet'
-import { Card, ColorPick, ConfirmButton, Empty, IconPick, Field, PageTitle, Progress, Sheet } from '../components/ui'
+import { Card, ColorPick, TintCard, ConfirmButton, Empty, IconPick, Field, PageTitle, Progress, Sheet } from '../components/ui'
 import type { ColorKey, Goal } from '../lib/types'
 
 export default function Goals() {
@@ -38,10 +38,11 @@ export default function Goals() {
         actions={<button className="btn btn-primary" onClick={() => setEditing('new')}><Plus size={16} /> Nova meta</button>} />
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4">
-        <Card delay={20} className="!p-4 sm:!p-5"><div className="text-[13px] text-ink2 mb-1">Total investido</div><div className="money num text-[24px] sm:text-[28px] font-bold">{money(total)}</div></Card>
-        <Card delay={60} className="!p-4 sm:!p-5"><div className="text-[13px] text-ink2 mb-1">Média por mês</div><div className="money num text-[24px] sm:text-[28px] font-bold">{money(avg)}</div></Card>
-        <Card delay={100} className="!p-4 sm:!p-5 col-span-2 lg:col-span-1"><div className="text-[13px] text-ink2 mb-1">Metas</div>
-          <div className="num text-[24px] sm:text-[28px] font-bold">{data.goals.filter((g) => goalSaved(data, g.id) >= g.target).length}<span className="text-ink3 font-medium"> / {data.goals.length} concluídas</span></div></Card>
+        <TintCard color="purple" icon="piggy" label="Total investido" delay={20}><div className="money num font-display kpi-num">{money(total)}</div></TintCard>
+        <TintCard color="blue" icon="trend" label="Média por mês" delay={60}><div className="money num font-display kpi-num">{money(avg)}</div></TintCard>
+        <TintCard color="green" icon="target" label="Metas" delay={100} className="col-span-2 lg:col-span-1">
+          <div className="num font-display kpi-num">{data.goals.filter((g) => goalSaved(data, g.id) >= g.target).length}<span className="text-ink3"> / {data.goals.length}</span><span className="text-[14px] text-ink2 font-sans"> concluídas</span></div>
+        </TintCard>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3 mb-4">

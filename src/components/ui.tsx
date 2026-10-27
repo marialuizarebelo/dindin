@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { ArrowDownRight, ArrowUpRight, X } from 'lucide-react'
 import { money } from '../lib/format'
 import { solid } from '../lib/colors'
-import { Icon, ICON_KEYS } from './Icon'
+import { Icon, IconBadge, ICON_KEYS } from './Icon'
 import type { ColorKey } from '../lib/types'
 
 export const cx = (...a: (string | false | null | undefined)[]) => a.filter(Boolean).join(' ')
@@ -12,6 +12,24 @@ const cssVar = (c: ColorKey) => ({ '--c': solid(c) }) as CSSProperties
 export function Card({ children, className, delay = 0, ...rest }: { children: ReactNode; className?: string; delay?: number } & React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div {...rest} className={cx('glass card fade-up', className)} style={{ animationDelay: `${delay}ms`, ...rest.style }}>
+      {children}
+    </div>
+  )
+}
+
+/** Cartao com fundo colorido suave: rotulo em caixa alta + icone + valor grande. */
+export function TintCard({ color, label, icon, right, children, delay = 0, className }: {
+  color: ColorKey; label: string; icon: string; right?: ReactNode; children: ReactNode; delay?: number; className?: string
+}) {
+  return (
+    <div className={cx('card tint fade-up !p-4 sm:!p-5', className)} style={{ ...cssVar(color), animationDelay: `${delay}ms` }}>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <span className="flex items-center gap-2.5 min-w-0">
+          <span className="hidden sm:block"><IconBadge name={icon} color={color} size={30} /></span>
+          <span className="kpi-label leading-tight">{label}</span>
+        </span>
+        {right}
+      </div>
       {children}
     </div>
   )
@@ -96,7 +114,7 @@ export function PageTitle({ title, subtitle, actions }: { title: string; subtitl
   return (
     <div className="flex items-end justify-between gap-3 flex-wrap mb-4 fade-up">
       <div>
-        <h1 className="font-serif text-[30px] sm:text-[36px] font-semibold tracking-tight leading-tight m-0">{title}</h1>
+        <h1 className="font-display text-[32px] sm:text-[40px] font-normal tracking-[0.005em] leading-[1.1] m-0">{title}</h1>
         {subtitle && <p className="text-ink2 m-0 mt-0.5 text-sm">{subtitle}</p>}
       </div>
       {actions}
