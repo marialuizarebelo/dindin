@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { ArrowDownRight, ArrowUpRight, X } from 'lucide-react'
 import { money } from '../lib/format'
 import { solid } from '../lib/colors'
+import { Icon, ICON_KEYS } from './Icon'
 import type { ColorKey } from '../lib/types'
 
 export const cx = (...a: (string | false | null | undefined)[]) => a.filter(Boolean).join(' ')
@@ -79,10 +80,12 @@ export function Delta({ value, invert }: { value: number | null; invert?: boolea
   )
 }
 
-export function Empty({ emoji, title, children }: { emoji: string; title: string; children?: ReactNode }) {
+export function Empty({ icon, title, children }: { icon: string; title: string; children?: ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-10 px-4 gap-1">
-      <div className="text-4xl mb-2">{emoji}</div>
+      <span className="grid place-items-center h-12 w-12 rounded-2xl mb-2 text-ink2" style={{ background: 'var(--field)' }}>
+        <Icon name={icon} size={22} strokeWidth={1.5} />
+      </span>
       <div className="font-semibold">{title}</div>
       {children && <div className="text-ink2 text-sm max-w-xs">{children}</div>}
     </div>
@@ -93,7 +96,7 @@ export function PageTitle({ title, subtitle, actions }: { title: string; subtitl
   return (
     <div className="flex items-end justify-between gap-3 flex-wrap mb-4 fade-up">
       <div>
-        <h1 className="text-[28px] sm:text-[32px] font-bold tracking-tight leading-tight m-0">{title}</h1>
+        <h1 className="font-serif text-[30px] sm:text-[36px] font-semibold tracking-tight leading-tight m-0">{title}</h1>
         {subtitle && <p className="text-ink2 m-0 mt-0.5 text-sm">{subtitle}</p>}
       </div>
       {actions}
@@ -158,14 +161,13 @@ export function ConfirmButton({ onConfirm, children, className }: { onConfirm: (
   )
 }
 
-export function EmojiPick({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const list = ['💼', '💸', '🏠', '🛒', '🚗', '🍽️', '💡', '💊', '📚', '🎬', '📱', '🛍️', '💅', '✈️', '🐾', '💳', '🏦', '📈', '🪙', '🛟', '🎁', '🏡', '🗾', '💻', '☂️', '🎓', '👶', '🏖️', '🎯', '✨']
+export function IconPick({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <div className="flex flex-wrap gap-1">
-      {list.map((e) => (
-        <button key={e} type="button" onClick={() => onChange(e)}
-          className={cx('h-9 w-9 rounded-xl text-lg grid place-items-center border border-transparent', value === e ? 'bg-[var(--accent-soft)] !border-[var(--accent)]' : 'hover:bg-[var(--field)]')}>
-          {e}
+      {ICON_KEYS.map((k) => (
+        <button key={k} type="button" onClick={() => onChange(k)} aria-label={k}
+          className={cx('h-9 w-9 rounded-xl grid place-items-center border border-transparent bg-transparent', value === k ? 'bg-[var(--accent-soft)] !border-[var(--accent)] text-accent' : 'text-ink2 hover:bg-[var(--field)]')}>
+          <Icon name={k} size={17} />
         </button>
       ))}
     </div>

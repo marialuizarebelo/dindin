@@ -3,30 +3,31 @@
 @tailwind utilities;
 
 /* ---------- tokens ---------- */
+/* Paleta: creme quente, rosé empoeirado, pêssego, lilás e sálvia. Tinta em ameixa-escuro (nunca preto puro). */
 :root {
   color-scheme: light;
-  --bg: #f6f5f3;
-  --ink: #1d1d1f;
-  --ink-2: rgba(60, 60, 67, 0.64);
-  --ink-3: rgba(60, 60, 67, 0.4);
-  --hair: rgba(60, 60, 67, 0.1);
+  --bg: #fbf7f4;
+  --ink: #33262e;
+  --ink-2: rgba(84, 62, 74, 0.68);
+  --ink-3: rgba(84, 62, 74, 0.42);
+  --hair: rgba(120, 82, 100, 0.12);
   --glass: rgba(255, 255, 255, 0.58);
-  --glass-strong: rgba(255, 255, 255, 0.82);
-  --glass-edge: rgba(255, 255, 255, 0.8);
-  --sheet: rgba(252, 251, 250, 0.95);
-  --surface: rgba(255, 255, 255, 0.72);
-  --field: rgba(120, 120, 135, 0.09);
-  --shadow: 0 1px 2px rgba(30, 30, 60, 0.04), 0 10px 32px rgba(50, 50, 100, 0.08);
-  --shadow-lg: 0 20px 60px rgba(40, 40, 90, 0.18);
-  --accent: #5b7cf5;
-  --accent-soft: rgba(91, 124, 245, 0.12);
-  --blob-1: rgba(176, 150, 250, 0.34);
-  --blob-2: rgba(255, 190, 140, 0.34);
-  --blob-3: rgba(120, 225, 190, 0.26);
-  --blob-4: rgba(130, 190, 255, 0.32);
+  --glass-strong: rgba(255, 252, 251, 0.84);
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --sheet: rgba(254, 251, 249, 0.96);
+  --surface: rgba(255, 255, 255, 0.74);
+  --field: rgba(160, 110, 135, 0.09);
+  --shadow: 0 1px 2px rgba(120, 70, 100, 0.04), 0 12px 34px rgba(150, 90, 120, 0.09);
+  --shadow-lg: 0 24px 64px rgba(110, 60, 90, 0.2);
+  --accent: #b5708d;
+  --accent-soft: rgba(181, 112, 141, 0.15);
+  --blob-1: rgba(244, 172, 200, 0.42);
+  --blob-2: rgba(255, 208, 165, 0.4);
+  --blob-3: rgba(205, 180, 245, 0.34);
+  --blob-4: rgba(165, 218, 203, 0.3);
 
-  --c-gray: #9b9a97; --c-brown: #b08968; --c-orange: #f0a050; --c-yellow: #e9c24c; --c-green: #5fba8c;
-  --c-teal: #4fb6b2; --c-blue: #5b9cf2; --c-purple: #9d7ee8; --c-pink: #ee80b3; --c-red: #ef7471;
+  --c-gray: #aaa29e; --c-brown: #c6a48f; --c-orange: #efb18d; --c-yellow: #e8cc92; --c-green: #9cc5ad;
+  --c-teal: #8dc4c1; --c-blue: #95aedc; --c-purple: #b9a7de; --c-pink: #e8a8be; --c-red: #e29ba0;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) { --dark: 1; }
@@ -37,26 +38,26 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --bg: #0d0d11; --ink: #f5f5f7; --ink-2: rgba(235, 235, 245, 0.62); --ink-3: rgba(235, 235, 245, 0.36);
-    --hair: rgba(255, 255, 255, 0.08); --glass: rgba(40, 40, 50, 0.5); --glass-strong: rgba(34, 34, 42, 0.82);
-    --glass-edge: rgba(255, 255, 255, 0.09); --sheet: rgba(26, 26, 32, 0.95); --surface: rgba(255, 255, 255, 0.06); --field: rgba(255, 255, 255, 0.07);
+    --bg: #171218; --ink: #f7eff3; --ink-2: rgba(246, 232, 240, 0.64); --ink-3: rgba(246, 232, 240, 0.38);
+    --hair: rgba(255, 235, 245, 0.09); --glass: rgba(58, 42, 56, 0.5); --glass-strong: rgba(44, 33, 44, 0.84);
+    --glass-edge: rgba(255, 235, 245, 0.1); --sheet: rgba(32, 25, 34, 0.96); --surface: rgba(255, 235, 245, 0.06); --field: rgba(255, 235, 245, 0.075);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
-    --accent: #8aa0ff; --accent-soft: rgba(138, 160, 255, 0.16);
-    --blob-1: rgba(120, 90, 220, 0.28); --blob-2: rgba(220, 120, 70, 0.16);
-    --blob-3: rgba(40, 170, 130, 0.16); --blob-4: rgba(60, 120, 230, 0.22);
+    --accent: #e3a3bd; --accent-soft: rgba(227, 163, 189, 0.17);
+    --blob-1: rgba(190, 90, 140, 0.26); --blob-2: rgba(220, 130, 90, 0.15);
+    --blob-3: rgba(130, 95, 200, 0.22); --blob-4: rgba(60, 150, 140, 0.15);
   }
 }
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0d0d11; --ink: #f5f5f7; --ink-2: rgba(235, 235, 245, 0.62); --ink-3: rgba(235, 235, 245, 0.36);
-  --hair: rgba(255, 255, 255, 0.08); --glass: rgba(40, 40, 50, 0.5); --glass-strong: rgba(34, 34, 42, 0.82);
-  --glass-edge: rgba(255, 255, 255, 0.09); --sheet: rgba(26, 26, 32, 0.95); --surface: rgba(255, 255, 255, 0.06); --field: rgba(255, 255, 255, 0.07);
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
-  --accent: #8aa0ff; --accent-soft: rgba(138, 160, 255, 0.16);
-  --blob-1: rgba(120, 90, 220, 0.28); --blob-2: rgba(220, 120, 70, 0.16);
-  --blob-3: rgba(40, 170, 130, 0.16); --blob-4: rgba(60, 120, 230, 0.22);
+  --bg: #171218; --ink: #f7eff3; --ink-2: rgba(246, 232, 240, 0.64); --ink-3: rgba(246, 232, 240, 0.38);
+    --hair: rgba(255, 235, 245, 0.09); --glass: rgba(58, 42, 56, 0.5); --glass-strong: rgba(44, 33, 44, 0.84);
+    --glass-edge: rgba(255, 235, 245, 0.1); --sheet: rgba(32, 25, 34, 0.96); --surface: rgba(255, 235, 245, 0.06); --field: rgba(255, 235, 245, 0.075);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 32px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --accent: #e3a3bd; --accent-soft: rgba(227, 163, 189, 0.17);
+    --blob-1: rgba(190, 90, 140, 0.26); --blob-2: rgba(220, 130, 90, 0.15);
+    --blob-3: rgba(130, 95, 200, 0.22); --blob-4: rgba(60, 150, 140, 0.15);
 }
 
 /* ---------- base ---------- */
@@ -115,8 +116,8 @@ input, select, textarea { font: inherit; color: inherit; }
   border: 1px solid var(--glass-edge);
   box-shadow: var(--shadow-lg);
 }
-.card { border-radius: 22px; padding: 18px 20px; }
-@media (max-width: 640px) { .card { padding: 16px; border-radius: 20px; } }
+.card { border-radius: 26px; padding: 18px 20px; }
+@media (max-width: 640px) { .card { padding: 16px; border-radius: 22px; } }
 
 /* ---------- controles ---------- */
 .btn {
@@ -131,10 +132,10 @@ input, select, textarea { font: inherit; color: inherit; }
 .btn:disabled { opacity: .5; pointer-events: none; }
 .btn-primary {
   color: #fff; border-color: transparent;
-  background: linear-gradient(180deg, #7d95fb, #5b7cf5);
-  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 16px rgba(91, 124, 245, .32);
+  background: linear-gradient(180deg, #d395ae, #b5708d);
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 16px rgba(181, 112, 141, .32);
 }
-.btn-primary:hover { background: linear-gradient(180deg, #8aa0fc, #6784f6); }
+.btn-primary:hover { background: linear-gradient(180deg, #da9fb8, #bd7a96); }
 .btn-danger { color: var(--c-red); }
 .btn-ghost { background: transparent; border-color: transparent; }
 .btn-ghost:hover { background: var(--field); }
@@ -147,7 +148,7 @@ input, select, textarea { font: inherit; color: inherit; }
 }
 .input::placeholder { color: var(--ink-3); }
 .input:focus { background: var(--surface); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239b9a97' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a89aa2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
 .label { display: block; font-size: 12px; font-weight: 500; color: var(--ink-2); margin: 0 0 6px 2px; }
 
 /* segmented control estilo iOS */

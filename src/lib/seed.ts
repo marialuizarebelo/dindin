@@ -5,33 +5,33 @@ import type { Category, Data, Debt, Goal, Recurring, Source, Transaction, Budget
 import { emptyData } from './types'
 
 export const defaultCategories = (): Category[] => [
-  { name: 'Moradia', emoji: '🏠', color: 'blue', kind: 'expense' },
-  { name: 'Mercado', emoji: '🛒', color: 'green', kind: 'expense' },
-  { name: 'Transporte', emoji: '🚗', color: 'orange', kind: 'expense' },
-  { name: 'Restaurantes', emoji: '🍽️', color: 'red', kind: 'expense' },
-  { name: 'Contas', emoji: '💡', color: 'yellow', kind: 'expense' },
-  { name: 'Saúde', emoji: '💊', color: 'teal', kind: 'expense' },
-  { name: 'Educação', emoji: '📚', color: 'purple', kind: 'expense' },
-  { name: 'Lazer', emoji: '🎬', color: 'pink', kind: 'expense' },
-  { name: 'Assinaturas', emoji: '📱', color: 'gray', kind: 'expense' },
-  { name: 'Compras', emoji: '🛍️', color: 'brown', kind: 'expense' },
-  { name: 'Cuidados', emoji: '💅', color: 'pink', kind: 'expense' },
-  { name: 'Viagens', emoji: '✈️', color: 'teal', kind: 'expense' },
-  { name: 'Dívidas', emoji: '💳', color: 'red', kind: 'expense' },
-  { name: 'Outros', emoji: '✨', color: 'gray', kind: 'expense' },
-  { name: 'Reserva de emergência', emoji: '🛟', color: 'green', kind: 'investment' },
-  { name: 'Renda fixa', emoji: '🏦', color: 'blue', kind: 'investment' },
-  { name: 'Ações', emoji: '📈', color: 'purple', kind: 'investment' },
-  { name: 'Fundos imobiliários', emoji: '🏢', color: 'orange', kind: 'investment' },
-  { name: 'Cripto', emoji: '🪙', color: 'yellow', kind: 'investment' },
-  { name: 'Previdência', emoji: '☂️', color: 'teal', kind: 'investment' },
+  { name: 'Moradia', icon: 'home', color: 'blue', kind: 'expense' },
+  { name: 'Mercado', icon: 'cart', color: 'green', kind: 'expense' },
+  { name: 'Transporte', icon: 'car', color: 'orange', kind: 'expense' },
+  { name: 'Restaurantes', icon: 'utensils', color: 'red', kind: 'expense' },
+  { name: 'Contas', icon: 'bulb', color: 'yellow', kind: 'expense' },
+  { name: 'Saúde', icon: 'health', color: 'teal', kind: 'expense' },
+  { name: 'Educação', icon: 'education', color: 'purple', kind: 'expense' },
+  { name: 'Lazer', icon: 'film', color: 'pink', kind: 'expense' },
+  { name: 'Assinaturas', icon: 'phone', color: 'gray', kind: 'expense' },
+  { name: 'Compras', icon: 'bag', color: 'brown', kind: 'expense' },
+  { name: 'Cuidados', icon: 'flower', color: 'pink', kind: 'expense' },
+  { name: 'Viagens', icon: 'plane', color: 'teal', kind: 'expense' },
+  { name: 'Dívidas', icon: 'card', color: 'red', kind: 'expense' },
+  { name: 'Outros', icon: 'sparkles', color: 'gray', kind: 'expense' },
+  { name: 'Reserva de emergência', icon: 'shield', color: 'green', kind: 'investment' },
+  { name: 'Renda fixa', icon: 'bank', color: 'blue', kind: 'investment' },
+  { name: 'Ações', icon: 'trend', color: 'purple', kind: 'investment' },
+  { name: 'Fundos imobiliários', icon: 'home', color: 'orange', kind: 'investment' },
+  { name: 'Cripto', icon: 'coins', color: 'yellow', kind: 'investment' },
+  { name: 'Previdência', icon: 'umbrella', color: 'teal', kind: 'investment' },
 ].map((c) => ({ id: uid(), ...c })) as Category[]
 
 export const defaultSources = (): Source[] => [
-  { name: 'Salário', emoji: '💼', color: 'green' },
-  { name: 'Freelas', emoji: '🧑‍💻', color: 'blue' },
-  { name: 'Rendimentos', emoji: '💸', color: 'purple' },
-  { name: 'Outros', emoji: '🎁', color: 'orange' },
+  { name: 'Salário', icon: 'briefcase', color: 'green' },
+  { name: 'Freelas', icon: 'laptop', color: 'blue' },
+  { name: 'Rendimentos', icon: 'trend', color: 'purple' },
+  { name: 'Outros', icon: 'gift', color: 'orange' },
 ].map((s) => ({ id: uid(), ...s })) as Source[]
 
 /** Dados de exemplo para conhecer o app (modo demonstracao). */
@@ -45,16 +45,16 @@ export function demoData(): Data {
   const ym = (back: number) => format(addMonths(today, -back), 'yyyy-MM')
 
   const goals: Goal[] = [
-    { id: uid(), name: 'Reserva de emergência', emoji: '🛟', color: 'green', target: 30000, initial: 4000, deadline: format(addMonths(today, 14), 'yyyy-MM-dd') },
-    { id: uid(), name: 'Viagem pro Japão', emoji: '🗾', color: 'pink', target: 18000, initial: 0, deadline: format(addMonths(today, 20), 'yyyy-MM-dd') },
-    { id: uid(), name: 'Entrada do apê', emoji: '🏡', color: 'blue', target: 80000, initial: 5000, deadline: null },
+    { id: uid(), name: 'Reserva de emergência', icon: 'shield', color: 'green', target: 30000, initial: 4000, deadline: format(addMonths(today, 14), 'yyyy-MM-dd') },
+    { id: uid(), name: 'Viagem pro Japão', icon: 'plane', color: 'pink', target: 18000, initial: 0, deadline: format(addMonths(today, 20), 'yyyy-MM-dd') },
+    { id: uid(), name: 'Entrada do apê', icon: 'key', color: 'blue', target: 80000, initial: 5000, deadline: null },
   ]
   d.goals = goals
 
   const debts: Debt[] = [
-    { id: uid(), name: 'Cartão de crédito', creditor: 'Banco', emoji: '💳', color: 'red', balance: 3200, balance_date: format(addMonths(today, -2), 'yyyy-MM-01'), interest_monthly: 12, min_payment: 320, due_day: 10 },
-    { id: uid(), name: 'Empréstimo pessoal', creditor: 'Banco', emoji: '🏦', color: 'orange', balance: 6400, balance_date: format(addMonths(today, -2), 'yyyy-MM-01'), interest_monthly: 3.2, min_payment: 380, due_day: 20 },
-    { id: uid(), name: 'Parcelamento notebook', creditor: 'Loja', emoji: '💻', color: 'purple', balance: 1800, balance_date: format(addMonths(today, -2), 'yyyy-MM-01'), interest_monthly: 0, min_payment: 300, due_day: 5 },
+    { id: uid(), name: 'Cartão de crédito', creditor: 'Banco', icon: 'card', color: 'red', balance: 3200, balance_date: format(addMonths(today, -2), 'yyyy-MM-01'), interest_monthly: 12, min_payment: 320, due_day: 10 },
+    { id: uid(), name: 'Empréstimo pessoal', creditor: 'Banco', icon: 'bank', color: 'orange', balance: 6400, balance_date: format(addMonths(today, -2), 'yyyy-MM-01'), interest_monthly: 3.2, min_payment: 380, due_day: 20 },
+    { id: uid(), name: 'Parcelamento notebook', creditor: 'Loja', icon: 'laptop', color: 'purple', balance: 1800, balance_date: format(addMonths(today, -2), 'yyyy-MM-01'), interest_monthly: 0, min_payment: 300, due_day: 5 },
   ]
   d.debts = debts
 

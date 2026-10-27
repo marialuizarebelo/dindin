@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
 import { differenceInCalendarMonths, format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Plus } from 'lucide-react'
+import { Plus, Sparkles } from 'lucide-react'
+import { Icon, IconBadge } from '../components/Icon'
 import { useStore } from '../lib/store'
 import { lastMonths, todayISO } from '../lib/period'
 import { goalSaved, summarize, txIn } from '../lib/stats'
@@ -9,7 +10,7 @@ import { money, moneyInt, parseMoney, percent } from '../lib/format'
 import { solid, COLOR_KEYS } from '../lib/colors'
 import { BarChart, Donut } from '../components/Charts'
 import { useTxSheet } from '../components/TxSheet'
-import { Card, ColorPick, ConfirmButton, Empty, EmojiPick, Field, PageTitle, Progress, Sheet } from '../components/ui'
+import { Card, ColorPick, ConfirmButton, Empty, IconPick, Field, PageTitle, Progress, Sheet } from '../components/ui'
 import type { ColorKey, Goal } from '../lib/types'
 
 export default function Goals() {
@@ -27,7 +28,7 @@ export default function Goals() {
     for (const t of inv) m.set(t.category_id ?? '_', (m.get(t.category_id ?? '_') ?? 0) + t.amount)
     return [...m.entries()].map(([id, value]) => {
       const c = data.categories.find((x) => x.id === id)
-      return { label: c?.name ?? 'Outros', value, color: solid(c?.color ?? 'gray'), emoji: c?.emoji ?? '📦' }
+      return { label: c?.name ?? 'Outros', value, color: solid(c?.color ?? 'gray'), icon: c?.icon ?? 'circle' }
     }).sort((a, b) => b.value - a.value)
   }, [inv, data.categories])
 
@@ -50,12 +51,12 @@ export default function Goals() {
         </Card>
         <Card delay={180}>
           <div className="font-semibold text-[16px] mb-3">Onde está investido</div>
-          {alloc.length === 0 ? <Empty emoji="🌱" title="Sem aportes ainda" /> : (
+          {alloc.length === 0 ? <Empty icon="sprout" title="Sem aportes ainda" /> : (
             <div className="flex flex-col items-center gap-4">
               <Donut size={150} thickness={18} slices={alloc}><div><div className="text-[11.5px] text-ink2">Total</div><div className="money num font-bold">{moneyInt(total)}</div></div></Donut>
               <div className="w-full flex flex-col gap-1.5">
                 {alloc.slice(0, 5).map((a) => (
-                  <div key={a.label} className="flex items-center gap-2 text-[13.5px]"><i className="dot" style={{ background: a.color }} /><span className="flex-1 truncate">{a.emoji} {a.label}</span><span className="num text-ink2">{percent(a.value / total)}</span></div>
+                  <div key={a.label} className="flex items-center gap-2 text-[13.5px]"><i className="dot" style={{ background: a.color }} /><span className="flex-1 truncate"><Icon name={a.icon} size={15} className="text-ink2" />{a.label}</span><span className="num text-ink2">{percent(a.value / total)}</span></div>
                 ))}
               </div>
             </div>
@@ -64,7 +65,7 @@ export default function Goals() {
       </div>
 
       {data.goals.length === 0 ? (
-        <Card><Empty emoji="🎯" title="Crie sua primeira meta">Viagem, reserva de emergência, entrada de um imóvel… Os aportes ligados à meta contam automaticamente.</Empty></Card>
+        <Card><Empty icon="target" title="Crie sua primeira meta">Viagem, reserva de emergência, entrada de um imóvel… Os aportes ligados à meta contam automaticamente.</Empty></Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {data.goals.map((g, i) => {
@@ -79,7 +80,7 @@ export default function Goals() {
               <Card key={g.id} delay={220 + i * 40}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <span className="h-11 w-11 rounded-2xl grid place-items-center text-2xl" style={{ background: `color-mix(in srgb, ${solid(g.color)} 20%, transparent)` }}>{g.emoji}</span>
+                    <IconBadge name={g.icon} color={g.color} size={44} />
                     <div><div className="font-semibold">{g.name}</div><div className="text-[12.5px] text-ink2">{g.deadline ? `até ${format(parseISO(g.deadline), 'MMM yyyy', { locale: ptBR })}` : 'sem prazo'}</div></div>
                   </div>
                   <button className="btn btn-sm btn-ghost" onClick={() => setEditing(g)}>Editar</button>
@@ -90,7 +91,7 @@ export default function Goals() {
                 </div>
                 <Progress value={ratio} color={g.color} />
                 <div className="text-[12.5px] text-ink2 mt-2.5 min-h-[34px]">
-                  {left === 0 ? '🎉 Meta atingida!' : (
+                  {left === 0 ? <span className="inline-flex items-center gap-1.5 text-ink"><Sparkles size={14} /> Meta atingida</span> : (
                     <>
                       {need !== null && <>Precisa guardar <b className="money num text-ink">{moneyInt(need)}</b>/mês. </>}
                       {eta !== null && <>No seu ritmo: {eta} {eta === 1 ? 'mês' : 'meses'}.</>}
@@ -111,7 +112,7 @@ export default function Goals() {
 function GoalForm({ goal, onClose }: { goal?: Goal; onClose: () => void }) {
   const { add, update, remove, notify } = useStore()
   const [name, setName] = useState(goal?.name ?? '')
-  const [emoji, setEmoji] = useState(goal?.emoji ?? '🎯')
+  const [icon, setIcon] = useState(goal?.icon ?? 'target')
   const [color, setColor] = useState<ColorKey>(goal?.color ?? 'blue')
   const [target, setTarget] = useState(goal ? String(goal.target).replace('.', ',') : '')
   const [initial, setInitial] = useState(goal ? String(goal.initial).replace('.', ',') : '')
@@ -121,7 +122,7 @@ function GoalForm({ goal, onClose }: { goal?: Goal; onClose: () => void }) {
     const t = parseMoney(target)
     if (!name.trim()) return setErr('Dê um nome')
     if (!(t > 0)) return setErr('Informe o valor da meta')
-    const row = { name: name.trim(), emoji, color, target: t, initial: parseMoney(initial) || 0, deadline: deadline || null }
+    const row = { name: name.trim(), icon, color, target: t, initial: parseMoney(initial) || 0, deadline: deadline || null }
     if (goal) update('goals', goal.id, row)
     else add('goals', row)
     notify('Meta salva')
@@ -138,7 +139,7 @@ function GoalForm({ goal, onClose }: { goal?: Goal; onClose: () => void }) {
         </div>
         <Field label="Prazo (opcional)"><input type="date" className="input" value={deadline} onChange={(e) => setDeadline(e.target.value)} /></Field>
         {err && <div className="text-[13px]" style={{ color: 'var(--c-red)' }}>{err}</div>}
-        <Field label="Ícone"><EmojiPick value={emoji} onChange={setEmoji} /></Field>
+        <Field label="Ícone"><IconPick value={icon} onChange={setIcon} /></Field>
         <Field label="Cor"><ColorPick value={color} onChange={setColor} keys={COLOR_KEYS} /></Field>
       </div>
     </Sheet>

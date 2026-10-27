@@ -6,7 +6,7 @@ create table if not exists public.categories (
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   name text not null,
   kind text not null check (kind in ('expense', 'investment')),
-  emoji text not null default '✨',
+  icon text not null default 'sparkles',
   color text not null default 'gray',
   created_at timestamptz not null default now()
 );
@@ -15,7 +15,7 @@ create table if not exists public.sources (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   name text not null,
-  emoji text not null default '💼',
+  icon text not null default 'briefcase',
   color text not null default 'green',
   created_at timestamptz not null default now()
 );
@@ -24,7 +24,7 @@ create table if not exists public.goals (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   name text not null,
-  emoji text not null default '🎯',
+  icon text not null default 'target',
   color text not null default 'blue',
   target numeric(14,2) not null check (target > 0),
   initial numeric(14,2) not null default 0,
@@ -37,7 +37,7 @@ create table if not exists public.debts (
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   name text not null,
   creditor text not null default '',
-  emoji text not null default '💳',
+  icon text not null default 'card',
   color text not null default 'red',
   balance numeric(14,2) not null check (balance >= 0),
   balance_date date not null default current_date,

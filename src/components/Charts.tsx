@@ -184,7 +184,7 @@ export function LineChart({ labels, series, height = 230 }: { labels: string[]; 
   )
 }
 
-export interface Slice { label: string; value: number; color: string; emoji?: string }
+export interface Slice { label: string; value: number; color: string; icon?: string }
 
 export function Donut({ slices, size = 180, thickness = 22, children, onHover }: {
   slices: Slice[]; size?: number; thickness?: number; children?: ReactNode; onHover?: (i: number | null) => void

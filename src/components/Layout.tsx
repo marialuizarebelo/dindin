@@ -21,8 +21,8 @@ const NAV = [
 function Brand() {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="h-8 w-8 rounded-[10px] grid place-items-center text-white text-[15px] font-bold" style={{ background: 'linear-gradient(135deg,#8aa4ff,#b99bf0)', boxShadow: '0 4px 12px rgba(120,130,240,.35)' }}>d</div>
-      <span className="text-[19px] font-bold tracking-tight">dindin</span>
+      <div className="h-8 w-8 rounded-[10px] grid place-items-center text-white text-[15px] font-bold" style={{ background: 'linear-gradient(135deg,#efb4c8,#c7aef0)', boxShadow: '0 4px 12px rgba(200,130,170,.38)' }}>d</div>
+      <span className="font-serif text-[22px] font-semibold tracking-tight">dindin</span>
     </div>
   )
 }
@@ -127,7 +127,7 @@ export default function Layout() {
         <Tab to="/" icon={LayoutDashboard} label="Início" end />
         <Tab to="/lancamentos" icon={ListOrdered} label="Lançar" />
         <button onClick={() => open()} aria-label="Novo lançamento" className="mx-auto -mt-6 h-[58px] w-[58px] rounded-full grid place-items-center text-white border-0"
-          style={{ background: 'linear-gradient(180deg,#7d95fb,#5b7cf5)', boxShadow: '0 10px 24px rgba(91,124,245,.45), inset 0 1px 0 rgba(255,255,255,.4)' }}>
+          style={{ background: 'linear-gradient(180deg,#d395ae,#b5708d)', boxShadow: '0 10px 24px rgba(181,112,141,.45), inset 0 1px 0 rgba(255,255,255,.4)' }}>
           <Plus size={28} strokeWidth={2.4} />
         </button>
         <Tab to="/planejamento" icon={CalendarCheck} label="Plano" />

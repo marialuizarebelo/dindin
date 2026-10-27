@@ -8,6 +8,7 @@ import { clampDay, monthKey, todayISO } from '../lib/period'
 import { money, moneyInt, parseMoney, percent } from '../lib/format'
 import { solid } from '../lib/colors'
 import { Toggle } from '../components/TxSheet'
+import { Icon, IconBadge } from '../components/Icon'
 import { Card, Chip, ConfirmButton, Empty, Field, Money, PageTitle, Progress, Seg, Sheet, Tag } from '../components/ui'
 import type { Kind, Nature, Recurring } from '../lib/types'
 
@@ -95,11 +96,11 @@ export default function Planning() {
                   if (c) { add('budgets', { category_id: c.id, amount: suggest(c.id) }); notify(`Limite de ${c.name} criado`) }
                 }}>
                 <option value="">+ Adicionar limite</option>
-                {without.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
+                {without.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             )}
           </div>
-          {budgets.length === 0 ? <Empty emoji="🎚️" title="Sem limites ainda">Defina quanto quer gastar por categoria e acompanhe o consumo.</Empty> : (
+          {budgets.length === 0 ? <Empty icon="sliders" title="Sem limites ainda">Defina quanto quer gastar por categoria e acompanhe o consumo.</Empty> : (
             <div className="flex flex-col gap-4">
               {budgets.map(({ b, c }) => {
                 const spent = plan.variableBy.get(b.category_id) ?? 0
@@ -108,7 +109,7 @@ export default function Planning() {
                 return (
                   <div key={b.id}>
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="text-[14px] font-medium">{c!.emoji} {c!.name}</span>
+                      <span className="text-[14px] font-medium flex items-center gap-2"><Icon name={c!.icon} size={15} className="text-ink2" />{c!.name}</span>
                       {editBudget === b.id ? (
                         <form className="flex gap-1.5" onSubmit={(e) => {
                           e.preventDefault()
@@ -143,13 +144,13 @@ export default function Planning() {
           <div className="text-[12.5px] text-ink2 mb-3">
             Entram todo mês: <b className="money num text-ink">{moneyInt(incomeTotal)}</b> · saem <b className="money num text-ink">{moneyInt(fixedTotal)}</b>
           </div>
-          {recs.length === 0 ? <Empty emoji="🔁" title="Nenhum fixo cadastrado">Aluguel, salário, assinaturas… cadastre uma vez e o app lança todo mês.</Empty> : (
+          {recs.length === 0 ? <Empty icon="repeat" title="Nenhum fixo cadastrado">Aluguel, salário, assinaturas… cadastre uma vez e o app lança todo mês.</Empty> : (
             <div className="flex flex-col">
               {recs.map((r) => {
                 const l = label({ kind: r.kind, category_id: r.category_id, source_id: r.source_id })
                 return (
                   <button key={r.id} onClick={() => setEditing(r)} className="flex items-center gap-3 py-2.5 border-0 border-b border-hair last:border-0 bg-transparent text-left" style={{ opacity: r.active ? 1 : 0.5 }}>
-                    <span className="h-9 w-9 rounded-xl grid place-items-center text-lg shrink-0" style={{ background: `color-mix(in srgb, ${solid(l.color)} 18%, transparent)` }}>{l.emoji}</span>
+                    <IconBadge name={l.icon} color={l.color} size={38} />
                     <span className="flex-1 min-w-0">
                       <span className="block truncate text-[14.5px] font-medium">{r.description}</span>
                       <span className="flex gap-1.5 items-center text-[12.5px] text-ink2"><Repeat size={12} /> dia {r.day} <Tag color={l.color}>{l.name}</Tag></span>
@@ -241,15 +242,15 @@ function RecurringForm({ rec, onClose }: { rec?: Recurring; onClose: () => void 
         <Field label={kind === 'income' ? 'Origem' : 'Categoria'}>
           <div className="flex flex-wrap gap-2">
             {kind === 'income'
-              ? data.sources.map((s) => <Chip key={s.id} color={s.color} active={sourceId === s.id} onClick={() => setSourceId(s.id)}>{s.emoji} {s.name}</Chip>)
-              : cats.map((c) => <Chip key={c.id} color={c.color} active={categoryId === c.id} onClick={() => setCategoryId(c.id)}>{c.emoji} {c.name}</Chip>)}
+              ? data.sources.map((s) => <Chip key={s.id} color={s.color} active={sourceId === s.id} onClick={() => setSourceId(s.id)}><Icon name={s.icon} size={15} /> {s.name}</Chip>)
+              : cats.map((c) => <Chip key={c.id} color={c.color} active={categoryId === c.id} onClick={() => setCategoryId(c.id)}><Icon name={c.icon} size={15} /> {c.name}</Chip>)}
           </div>
         </Field>
         {kind === 'investment' && data.goals.length > 0 && (
           <Field label="Meta (opcional)">
             <select className="input" value={goalId ?? ''} onChange={(e) => setGoalId(e.target.value || null)}>
               <option value="">Sem meta</option>
-              {data.goals.map((g) => <option key={g.id} value={g.id}>{g.emoji} {g.name}</option>)}
+              {data.goals.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </Field>
         )}

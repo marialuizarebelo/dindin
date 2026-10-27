@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { addDays, addMonths, endOfMonth, format, getDate, parseISO } from 'date-fns'
-import { ArrowRight, Check } from 'lucide-react'
+import { ptBR } from 'date-fns/locale'
+import { ArrowRight, Bell, CalendarClock, Check, CircleAlert, Compass, Leaf, Sun, TrendingUp, Equal } from 'lucide-react'
+import { Icon, IconBadge } from '../components/Icon'
+import { useName } from '../lib/prefs'
 import { useStore } from '../lib/store'
 import { useLookup } from '../lib/lookup'
 import { buckets, inRange, lastMonths, monthKey, previousRange, todayISO, rangeOf } from '../lib/period'
@@ -16,6 +19,7 @@ import type { Transaction } from '../lib/types'
 
 export default function Dashboard() {
   const { data, demo, loadDemo } = useStore()
+  const name = useName()
   const { period, range } = usePeriod()
   const { label } = useLookup()
   const { edit, open } = useTxSheet()
@@ -34,7 +38,7 @@ export default function Dashboard() {
       series: [
         { name: 'Recebido', color: solid('green'), values: rows.map((r) => r.income) },
         { name: 'Gasto', color: solid('red'), values: rows.map((r) => r.expense) },
-        { name: 'Investido', color: solid('blue'), values: rows.map((r) => r.investment) },
+        { name: 'Investido', color: solid('purple'), values: rows.map((r) => r.investment) },
       ],
     }
   }, [txs, period])
@@ -63,29 +67,29 @@ export default function Dashboard() {
   }, [txs, range.end])
 
   const byCategory = useMemo(() => {
-    const m = new Map<string, { name: string; emoji: string; color: string; value: number }>()
+    const m = new Map<string, { name: string; icon: string; color: string; value: number }>()
     for (const t of txIn(txs, range)) {
       if (t.kind !== 'expense' || !t.paid) continue
       const l = label(t)
       const k = t.category_id ?? '_'
-      const e = m.get(k) ?? { name: l.name, emoji: l.emoji, color: solid(l.color), value: 0 }
+      const e = m.get(k) ?? { name: l.name, icon: l.icon, color: solid(l.color), value: 0 }
       e.value += t.amount
       m.set(k, e)
     }
     const all = [...m.values()].sort((a, b) => b.value - a.value)
     const top = all.slice(0, 6)
     const rest = all.slice(6).reduce((a, b) => a + b.value, 0)
-    if (rest > 0) top.push({ name: 'Outras', emoji: '…', color: solid('gray'), value: rest })
+    if (rest > 0) top.push({ name: 'Outras', icon: 'circle', color: solid('gray'), value: rest })
     return top
   }, [txs, range, label])
 
   const bySource = useMemo(() => {
-    const m = new Map<string, { name: string; emoji: string; color: string; value: number }>()
+    const m = new Map<string, { name: string; icon: string; color: string; value: number }>()
     for (const t of txIn(txs, range)) {
       if (t.kind !== 'income' || !t.paid) continue
       const l = label(t)
       const k = t.source_id ?? '_'
-      const e = m.get(k) ?? { name: l.name, emoji: l.emoji, color: solid(l.color), value: 0 }
+      const e = m.get(k) ?? { name: l.name, icon: l.icon, color: solid(l.color), value: 0 }
       e.value += t.amount
       m.set(k, e)
     }
@@ -108,12 +112,12 @@ export default function Dashboard() {
 
   return (
     <>
-      <PageTitle title="Visão geral" subtitle="Tudo que entrou, saiu e cresceu" />
+      <PageTitle title={name ? `Oi, ${name}` : 'Visão geral'} subtitle={format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })} />
       <PeriodBar />
 
       {empty && (
         <Card className="mb-4">
-          <Empty emoji="🌱" title="Vamos começar">
+          <Empty icon="sprout" title="Vamos começar">
             Adicione seu primeiro lançamento com o botão <b>+</b>, ou cadastre suas despesas fixas em Planejamento.
             {demo && (
               <div className="mt-3"><button className="btn btn-primary" onClick={() => void loadDemo()}>Carregar dados de exemplo</button></div>
@@ -130,9 +134,9 @@ export default function Dashboard() {
           foot={cur.pendingIncome > 0 ? `${money(cur.pendingIncome)} ainda a receber` : 'tudo recebido'} />
         <Kpi title="Gasto" value={cur.expense} d={delta(cur.expense, prev.expense)} invert color="red" delay={80}
           foot={cur.income > 0 ? `${percent(cur.expense / cur.income)} do que recebeu` : undefined} />
-        <Kpi title="Investido" value={cur.investment} d={delta(cur.investment, prev.investment)} color="blue" delay={120}
+        <Kpi title="Investido" value={cur.investment} d={delta(cur.investment, prev.investment)} color="purple" delay={120}
           foot={cur.income > 0 ? `${percent(cur.investment / cur.income)} da renda` : undefined} />
-        <Kpi title="Sobrou" value={cur.left} d={delta(cur.left, prev.left)} color={cur.left >= 0 ? 'purple' : 'red'} delay={160} strong
+        <Kpi title="Sobrou" value={cur.left} d={delta(cur.left, prev.left)} color={cur.left >= 0 ? 'blue' : 'red'} delay={160} strong
           foot={cur.pendingExpense > 0 ? `${money(cur.pendingExpense)} ainda a pagar` : 'tudo em dia'} />
       </div>
 
@@ -148,7 +152,7 @@ export default function Dashboard() {
 
         <Card delay={240}>
           <div className="font-semibold text-[16px] mb-3">Para onde foi</div>
-          {byCategory.length === 0 ? <Empty emoji="🍃" title="Sem gastos no período" /> : (
+          {byCategory.length === 0 ? <Empty icon="leaf" title="Sem gastos no período" /> : (
             <div className="flex flex-col items-center gap-4">
               <Donut size={168} thickness={20} slices={byCategory.map((c) => ({ label: c.name, value: c.value, color: c.color }))} onHover={setHoverCat}>
                 <div>
@@ -160,7 +164,7 @@ export default function Dashboard() {
                 {byCategory.map((c, i) => (
                   <div key={c.name} className="flex items-center gap-2 text-[13.5px]" style={{ opacity: hoverCat === null || hoverCat === i ? 1 : 0.5 }}>
                     <i className="dot" style={{ background: c.color }} />
-                    <span className="flex-1 truncate">{c.emoji} {c.name}</span>
+                    <span className="flex-1 truncate flex items-center gap-2"><Icon name={c.icon} size={15} className="text-ink2 shrink-0" />{c.name}</span>
                     <span className="text-ink2 num">{percent(c.value / totalCat)}</span>
                     <span className="money num font-medium w-[88px] text-right">{money(c.value)}</span>
                   </div>
@@ -174,12 +178,12 @@ export default function Dashboard() {
       <div className="grid gap-4 lg:grid-cols-3 mb-4">
         <Card delay={280}>
           <div className="font-semibold text-[16px] mb-3">De onde veio</div>
-          {bySource.length === 0 ? <Empty emoji="💤" title="Nenhuma receita no período" /> : (
+          {bySource.length === 0 ? <Empty icon="wallet" title="Nenhuma receita no período" /> : (
             <div className="flex flex-col gap-3">
               {bySource.map((s) => (
                 <div key={s.name}>
                   <div className="flex justify-between text-[13.5px] mb-1.5">
-                    <span>{s.emoji} {s.name}</span>
+                    <span className="flex items-center gap-2"><Icon name={s.icon} size={15} className="text-ink2" />{s.name}</span>
                     <span className="money num font-medium">{money(s.value)}</span>
                   </div>
                   <div className="progress"><i style={{ width: `${(s.value / cur.income) * 100}%`, background: s.color }} /></div>
@@ -208,7 +212,7 @@ export default function Dashboard() {
             <div className="font-semibold text-[16px]">A pagar</div>
             <Link to="/lancamentos" className="text-[13px] text-accent no-underline flex items-center gap-1">ver tudo <ArrowRight size={13} /></Link>
           </div>
-          {upcoming.length === 0 ? <Empty emoji="✅" title="Nada pendente" /> : (
+          {upcoming.length === 0 ? <Empty icon="check" title="Nada pendente" /> : (
             <div className="flex flex-col">
               {upcoming.map((t) => <TxRow key={t.id} t={t} onOpen={() => edit(t)} onToggle={() => update('transactions', t.id, { paid: true })} />)}
             </div>
@@ -220,14 +224,14 @@ export default function Dashboard() {
             <div className="font-semibold text-[16px]">Metas e dívidas</div>
             <Link to="/metas" className="text-[13px] text-accent no-underline flex items-center gap-1">abrir <ArrowRight size={13} /></Link>
           </div>
-          {data.goals.length === 0 && data.debts.length === 0 ? <Empty emoji="🎯" title="Sem metas ainda">Crie uma meta pra acompanhar seus aportes.</Empty> : (
+          {data.goals.length === 0 && data.debts.length === 0 ? <Empty icon="target" title="Sem metas ainda">Crie uma meta pra acompanhar seus aportes.</Empty> : (
             <div className="flex flex-col gap-3.5">
               {data.goals.slice(0, 3).map((g) => {
                 const saved = goalSaved(data, g.id)
                 return (
                   <div key={g.id}>
                     <div className="flex justify-between text-[13.5px] mb-1.5">
-                      <span>{g.emoji} {g.name}</span>
+                      <span className="flex items-center gap-2"><Icon name={g.icon} size={15} className="text-ink2" />{g.name}</span>
                       <span className="text-ink2 num">{percent(Math.min(saved / g.target, 1))}</span>
                     </div>
                     <Progress value={saved / g.target} color={g.color} />
@@ -236,7 +240,7 @@ export default function Dashboard() {
               })}
               {data.debts.length > 0 && (
                 <Link to="/dividas" className="no-underline text-ink flex items-center justify-between rounded-2xl bg-[var(--field)] px-3.5 py-3 mt-1">
-                  <span className="text-[13.5px]">💳 Dívidas em aberto</span>
+                  <span className="text-[13.5px] flex items-center gap-2"><Icon name="card" size={15} className="text-ink2" />Dívidas em aberto</span>
                   <span className="money num font-semibold">{money(totalDebt)}</span>
                 </Link>
               )}
@@ -247,7 +251,7 @@ export default function Dashboard() {
 
       <Card delay={400}>
         <div className="font-semibold text-[16px] mb-1">Últimos lançamentos</div>
-        {recent.length === 0 ? <Empty emoji="📝" title="Nada por aqui" /> : (
+        {recent.length === 0 ? <Empty icon="pen" title="Nada por aqui" /> : (
           <div className="flex flex-col">
             {recent.map((t) => <TxRow key={t.id} t={t} onOpen={() => edit(t)} />)}
           </div>
@@ -266,7 +270,7 @@ export default function Dashboard() {
           </button>
         )}
         <button onClick={onOpen} className="flex-1 min-w-0 flex items-center gap-3 bg-transparent border-0 p-0 text-left">
-          <span className="h-9 w-9 rounded-xl grid place-items-center text-lg shrink-0" style={{ background: `color-mix(in srgb, ${solid(l.color)} 18%, transparent)` }}>{l.emoji}</span>
+          <IconBadge name={l.icon} color={l.color} />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[14.5px] font-medium">{t.description}</span>
             <span className="block text-[12.5px] text-ink2">{fmtDate(t.date)} · {l.name}</span>
@@ -287,7 +291,7 @@ function Kpi({ title, value, d, color, foot, invert, strong, delay }: {
         <span className="flex items-center gap-2 text-[13px] text-ink2 font-medium"><i className="dot" style={{ background: solid(color) }} />{title}</span>
         <Delta value={d} invert={invert} />
       </div>
-      <div className={`money num font-bold tracking-tight ${strong ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'}`}>{money(value)}</div>
+      <div className={`money num font-semibold tracking-tight ${strong ? 'text-[26px] sm:text-[30px]' : 'text-[22px] sm:text-[26px]'}`}>{money(value)}</div>
       {foot && <div className="text-[12.5px] text-ink2 mt-1">{foot}</div>}
     </Card>
   )
@@ -312,7 +316,7 @@ function Insights() {
     const daysLeft = daysIn - day + 1
     const month = data.transactions.filter((t) => monthKey(t.date) === ym)
     const s = summarize(month)
-    const out: { emoji: string; text: React.ReactNode; tone: 'good' | 'warn' | 'bad' | 'info' }[] = []
+    const out: { icon: React.ReactNode; text: React.ReactNode; tone: 'good' | 'warn' | 'bad' | 'info' }[] = []
 
     // ritmo dos gastos variaveis vs. media dos ultimos 3 meses (mesma janela de dias)
     let avg = 0
@@ -329,9 +333,9 @@ function Insights() {
     const varSoFar = month.filter((t) => t.kind === 'expense' && t.paid && t.nature !== 'fixed' && !t.debt_id).reduce((a, t) => a + t.amount, 0)
     if (avg > 100) {
       const ratio = varSoFar / avg - 1
-      if (ratio > 0.1) out.push({ emoji: '🔥', tone: 'warn', text: <>Seus gastos variáveis estão <b>{percent(ratio)} acima</b> do seu ritmo normal para este ponto do mês.</> })
-      else if (ratio < -0.1) out.push({ emoji: '🌿', tone: 'good', text: <>Você está gastando <b>{percent(-ratio)} menos</b> que o seu normal. Segue assim!</> })
-      else out.push({ emoji: '👌', tone: 'info', text: <>Seus gastos variáveis estão <b>no ritmo de sempre</b>.</> })
+      if (ratio > 0.1) out.push({ icon: <TrendingUp size={17} />, tone: 'warn', text: <>Seus gastos variáveis estão <b>{percent(ratio)} acima</b> do seu ritmo normal para este ponto do mês.</> })
+      else if (ratio < -0.1) out.push({ icon: <Leaf size={17} />, tone: 'good', text: <>Você está gastando <b>{percent(-ratio)} menos</b> que o seu normal. Segue assim!</> })
+      else out.push({ icon: <Equal size={17} />, tone: 'info', text: <>Seus gastos variáveis estão <b>no ritmo de sempre</b>.</> })
     }
 
     // quanto posso gastar por dia
@@ -342,14 +346,14 @@ function Insights() {
     if (expectedIncome > 0) {
       const free = expectedIncome - fixedAll - investAll - varAll
       const perDay = free / daysLeft
-      if (free > 0) out.push({ emoji: '☀️', tone: 'good', text: <>Depois de fixas e aportes, dá pra gastar cerca de <b className="money">{money(perDay)} por dia</b> até o fim do mês.</> })
-      else out.push({ emoji: '🧯', tone: 'bad', text: <>Pelo que já foi lançado, o mês passa <b className="money">{money(-free)}</b> da sua renda. Vale segurar os gastos variáveis.</> })
+      if (free > 0) out.push({ icon: <Sun size={17} />, tone: 'good', text: <>Depois de fixas e aportes, dá pra gastar cerca de <b className="money">{money(perDay)} por dia</b> até o fim do mês.</> })
+      else out.push({ icon: <CircleAlert size={17} />, tone: 'bad', text: <>Pelo que já foi lançado, o mês passa <b className="money">{money(-free)}</b> da sua renda. Vale segurar os gastos variáveis.</> })
 
       // projecao
       const pace = day > 0 ? varSoFar / day : 0
       const projVar = Math.max(varAll, pace * daysIn)
       const projLeft = expectedIncome - fixedAll - investAll - projVar
-      if (day >= 5) out.push({ emoji: projLeft >= 0 ? '🔮' : '⚠️', tone: projLeft >= 0 ? 'info' : 'warn', text: <>No ritmo atual, o mês fecha {projLeft >= 0 ? 'com sobra de' : 'faltando'} <b className="money">{money(Math.abs(projLeft))}</b>.</> })
+      if (day >= 5) out.push({ icon: projLeft >= 0 ? <Compass size={17} /> : <CircleAlert size={17} />, tone: projLeft >= 0 ? 'info' : 'warn', text: <>No ritmo atual, o mês fecha {projLeft >= 0 ? 'com sobra de' : 'faltando'} <b className="money">{money(Math.abs(projLeft))}</b>.</> })
     }
 
     // vencimentos proximos
@@ -358,7 +362,7 @@ function Insights() {
     if (soon.length) {
       const total = soon.reduce((a, t) => a + t.amount, 0)
       const late = soon.filter((t) => t.date < today).length
-      out.push({ emoji: late ? '⏰' : '🗓️', tone: late ? 'bad' : 'info', text: <>{late ? <><b>{late} em atraso</b> e </> : null}<b>{soon.length} {soon.length === 1 ? 'conta' : 'contas'}</b> a pagar nos próximos 7 dias: <b className="money">{money(total)}</b>.</> })
+      out.push({ icon: late ? <Bell size={17} /> : <CalendarClock size={17} />, tone: late ? 'bad' : 'info', text: <>{late ? <><b>{late} em atraso</b> e </> : null}<b>{soon.length} {soon.length === 1 ? 'conta' : 'contas'}</b> a pagar nos próximos 7 dias: <b className="money">{money(total)}</b>.</> })
     }
     return out
   }, [data.transactions])
@@ -375,7 +379,7 @@ function Insights() {
         {lines.map((l, i) => (
           <div key={i} className="flex gap-3 items-start rounded-2xl px-3.5 py-3 text-[14px] leading-snug"
             style={{ background: `color-mix(in srgb, ${solid(tones[l.tone])} 12%, transparent)` }}>
-            <span className="text-xl leading-none mt-0.5">{l.emoji}</span>
+            <span className="mt-[1px] grid place-items-center h-7 w-7 rounded-full shrink-0" style={{ background: `color-mix(in srgb, ${solid(tones[l.tone])} 30%, transparent)`, color: `color-mix(in srgb, ${solid(tones[l.tone])} 75%, var(--ink))` }}>{l.icon}</span>
             <span>{l.text}</span>
           </div>
         ))}

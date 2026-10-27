@@ -1,4 +1,4 @@
-# dindin 💸
+# dindin
 
 Controle financeiro pessoal: receitas por origem, despesas fixas e variáveis, investimentos, metas,
 dívidas (com simulador de quitação), planejamento e uma visão de planilha. Funciona no celular e no

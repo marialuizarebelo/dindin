@@ -4,9 +4,9 @@ import { useStore } from '../lib/store'
 import { useLookup } from '../lib/lookup'
 import { summarize, txIn } from '../lib/stats'
 import { fmtDay, money } from '../lib/format'
-import { solid } from '../lib/colors'
 import { PeriodBar, usePeriod } from '../components/PeriodBar'
 import { useTxSheet } from '../components/TxSheet'
+import { IconBadge } from '../components/Icon'
 import { Card, Empty, Money, PageTitle, Seg, Tag } from '../components/ui'
 import type { Kind } from '../lib/types'
 
@@ -40,7 +40,7 @@ export default function Transactions() {
     return [...m.entries()]
   }, [list])
 
-  const options = [...data.categories.map((c) => ({ id: c.id, name: `${c.emoji} ${c.name}` })), ...data.sources.map((s) => ({ id: s.id, name: `${s.emoji} ${s.name}` }))]
+  const options = [...data.categories.map((c) => ({ id: c.id, name: c.name })), ...data.sources.map((s) => ({ id: s.id, name: s.name }))]
 
   return (
     <>
@@ -76,7 +76,7 @@ export default function Transactions() {
       </Card>
 
       {groups.length === 0 ? (
-        <Card><Empty emoji="🔎" title="Nada encontrado">Ajuste o período ou os filtros — ou adicione um lançamento.</Empty></Card>
+        <Card><Empty icon="search" title="Nada encontrado">Ajuste o período ou os filtros — ou adicione um lançamento.</Empty></Card>
       ) : (
         <div className="flex flex-col gap-4">
           {groups.map(([date, items], gi) => {
@@ -97,7 +97,7 @@ export default function Transactions() {
                         <Check size={13} strokeWidth={3.2} />
                       </button>
                       <button onClick={() => edit(t)} className="flex-1 min-w-0 flex items-center gap-3 bg-transparent border-0 p-0 text-left">
-                        <span className="h-9 w-9 rounded-xl grid place-items-center text-lg shrink-0" style={{ background: `color-mix(in srgb, ${solid(l.color)} 18%, transparent)` }}>{l.emoji}</span>
+                        <IconBadge name={l.icon} color={l.color} size={38} />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-[14.5px] font-medium" style={{ opacity: t.paid ? 1 : 0.7 }}>{t.description}</span>
                           <span className="flex items-center gap-1.5 mt-0.5 flex-wrap">

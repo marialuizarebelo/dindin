@@ -8,7 +8,7 @@ export interface Category {
   id: string
   name: string
   kind: 'expense' | 'investment'
-  emoji: string
+  icon: string
   color: ColorKey
 }
 
@@ -16,7 +16,7 @@ export interface Category {
 export interface Source {
   id: string
   name: string
-  emoji: string
+  icon: string
   color: ColorKey
 }
 
@@ -55,7 +55,7 @@ export interface Recurring {
 export interface Goal {
   id: string
   name: string
-  emoji: string
+  icon: string
   color: ColorKey
   target: number
   initial: number
@@ -66,7 +66,7 @@ export interface Debt {
   id: string
   name: string
   creditor: string
-  emoji: string
+  icon: string
   color: ColorKey
   balance: number // saldo devedor informado em balance_date
   balance_date: string

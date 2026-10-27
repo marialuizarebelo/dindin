@@ -5,10 +5,11 @@ import { compact, fmtDate, money } from '../lib/format'
 import { solid } from '../lib/colors'
 import { PeriodBar, usePeriod } from '../components/PeriodBar'
 import { useTxSheet } from '../components/TxSheet'
+import { Icon } from '../components/Icon'
 import { Card, Money, PageTitle, Seg, Sheet } from '../components/ui'
 import type { ColorKey, Transaction } from '../lib/types'
 
-interface Row { id: string; name: string; emoji: string; color: ColorKey; cells: number[]; txs: Transaction[][]; total: number }
+interface Row { id: string; name: string; icon: string; color: ColorKey; cells: number[]; txs: Transaction[][]; total: number }
 interface Group { title: string; tone: 'green' | 'purple' | 'orange' | 'blue'; rows: Row[] }
 
 export default function SheetPage() {
@@ -23,7 +24,7 @@ export default function SheetPage() {
   const { groups, totals } = useMemo(() => {
     const pool = data.transactions.filter((t) => (mode === 'prev' ? true : t.paid) && inRange(t.date, { start: bs[0].start, end: bs[bs.length - 1].end }))
     const idx = (date: string) => bs.findIndex((b) => date >= b.start && date <= b.end)
-    const build = (filter: (t: Transaction) => boolean, key: (t: Transaction) => string | null, meta: (id: string) => { name: string; emoji: string; color: ColorKey }): Row[] => {
+    const build = (filter: (t: Transaction) => boolean, key: (t: Transaction) => string | null, meta: (id: string) => { name: string; icon: string; color: ColorKey }): Row[] => {
       const m = new Map<string, Row>()
       for (const t of pool) {
         if (!filter(t)) continue
@@ -32,7 +33,7 @@ export default function SheetPage() {
         const k = key(t) ?? '_none'
         let r = m.get(k)
         if (!r) {
-          const mt = k === '_none' ? { name: 'Sem categoria', emoji: '📦', color: 'gray' as ColorKey } : meta(k)
+          const mt = k === '_none' ? { name: 'Sem categoria', icon: 'circle', color: 'gray' as ColorKey } : meta(k)
           r = { id: k, ...mt, cells: bs.map(() => 0), txs: bs.map(() => []), total: 0 }
           m.set(k, r)
         }
@@ -42,8 +43,8 @@ export default function SheetPage() {
       }
       return [...m.values()].sort((a, b) => b.total - a.total)
     }
-    const catMeta = (id: string) => data.categories.find((c) => c.id === id) ?? { name: '?', emoji: '📦', color: 'gray' as ColorKey }
-    const srcMeta = (id: string) => data.sources.find((c) => c.id === id) ?? { name: '?', emoji: '💰', color: 'gray' as ColorKey }
+    const catMeta = (id: string) => data.categories.find((c) => c.id === id) ?? { name: '?', icon: 'circle', color: 'gray' as ColorKey }
+    const srcMeta = (id: string) => data.sources.find((c) => c.id === id) ?? { name: '?', icon: 'wallet', color: 'gray' as ColorKey }
     const income = build((t) => t.kind === 'income', (t) => t.source_id, srcMeta)
     const fixed = build((t) => t.kind === 'expense' && t.nature === 'fixed', (t) => t.category_id, catMeta)
     const variable = build((t) => t.kind === 'expense' && t.nature !== 'fixed', (t) => t.category_id, catMeta)
@@ -81,8 +82,8 @@ export default function SheetPage() {
             <tbody>
               {groups.map((g) => (
                 <GroupRows key={g.title} g={g} max={max}
-                  onCell={(r, i) => r.txs[i].length && setDetail({ title: `${r.emoji} ${r.name} · ${bs[i].label}`, txs: r.txs[i] })}
-                  onTotal={(r) => setDetail({ title: `${r.emoji} ${r.name}`, txs: r.txs.flat() })}
+                  onCell={(r, i) => r.txs[i].length && setDetail({ title: `${r.name} · ${bs[i].label}`, txs: r.txs[i] })}
+                  onTotal={(r) => setDetail({ title: r.name, txs: r.txs.flat() })}
                   cols={bs.length}
                 />
               ))}
@@ -122,7 +123,7 @@ function GroupRows({ g, max, onCell, onTotal, cols }: { g: Group; max: (r: Row) 
       <tr className="group"><td colSpan={cols + 2}>{g.title}</td></tr>
       {g.rows.map((r) => (
         <tr key={r.id}>
-          <td><span className="mr-1.5">{r.emoji}</span>{r.name}</td>
+          <td><span className="inline-flex items-center gap-2"><Icon name={r.icon} size={15} className="text-ink2 shrink-0" />{r.name}</span></td>
           {r.cells.map((v, i) => (
             <td key={i} className={`cell money ${v === 0 ? 'zero' : ''}`} onClick={() => onCell(r, i)}
               style={v ? { background: `color-mix(in srgb, ${color} ${Math.round((v / max(r)) * 26)}%, transparent)` } : undefined}>

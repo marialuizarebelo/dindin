@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { addMonths, format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Plus } from 'lucide-react'
+import { Icon, IconBadge } from '../components/Icon'
 import { useStore } from '../lib/store'
 import { todayISO } from '../lib/period'
 import { debtBalance } from '../lib/stats'
@@ -10,7 +11,7 @@ import { solid, COLOR_KEYS } from '../lib/colors'
 import { simulatePayoff, type Strategy } from '../lib/debt'
 import { LineChart } from '../components/Charts'
 import { useTxSheet } from '../components/TxSheet'
-import { Card, ColorPick, ConfirmButton, Empty, EmojiPick, Field, PageTitle, Seg, Sheet, Tag } from '../components/ui'
+import { Card, ColorPick, ConfirmButton, Empty, IconPick, Field, PageTitle, Seg, Sheet, Tag } from '../components/ui'
 import type { ColorKey, Debt } from '../lib/types'
 
 const monthName = (n: number) => format(addMonths(new Date(), n), 'MMM yyyy', { locale: ptBR })
@@ -44,13 +45,13 @@ export default function Debts() {
         actions={<button className="btn btn-primary" onClick={() => setEditing('new')}><Plus size={16} /> Nova dívida</button>} />
 
       {data.debts.length === 0 ? (
-        <Card><Empty emoji="🕊️" title="Sem dívidas cadastradas">Se tiver cartão, empréstimo ou parcelamento, cadastre aqui e simule a melhor forma de quitar.</Empty></Card>
+        <Card><Empty icon="bird" title="Sem dívidas cadastradas">Se tiver cartão, empréstimo ou parcelamento, cadastre aqui e simule a melhor forma de quitar.</Empty></Card>
       ) : (
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
             <Stat title="Em aberto" v={money(total)} delay={20} />
             <Stat title="Mínimos por mês" v={money(minTotal)} delay={60} />
-            <Stat title="Livre das dívidas" v={chosen.feasible && chosen.months > 0 ? monthName(chosen.months) : chosen.feasible ? 'Já quitado 🎉' : 'Não quita'} delay={100} accent />
+            <Stat title="Livre das dívidas" v={chosen.feasible && chosen.months > 0 ? monthName(chosen.months) : chosen.feasible ? 'Tudo quitado' : 'Não quita'} delay={100} accent />
             <Stat title="Juros até lá" v={chosen.feasible ? money(chosen.totalInterest) : '—'} delay={140} />
           </div>
 
@@ -59,7 +60,7 @@ export default function Debts() {
               <Card key={d.id} delay={180 + i * 40}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-3">
-                    <span className="h-11 w-11 rounded-2xl grid place-items-center text-2xl" style={{ background: `color-mix(in srgb, ${solid(d.color)} 20%, transparent)` }}>{d.emoji}</span>
+                    <IconBadge name={d.icon} color={d.color} size={44} />
                     <div><div className="font-semibold">{d.name}</div>
                       <div className="flex gap-1.5 mt-0.5 flex-wrap"><Tag color={d.interest_monthly > 5 ? 'red' : d.interest_monthly > 0 ? 'orange' : 'green'}>{String(d.interest_monthly).replace('.', ',')}% a.m.</Tag>{d.due_day && <Tag color="gray">vence dia {d.due_day}</Tag>}</div></div>
                   </div>
@@ -116,7 +117,7 @@ export default function Debts() {
                   return (
                     <div key={id} className="flex items-center gap-3 text-[14px]">
                       <span className="h-6 w-6 rounded-full grid place-items-center text-[12px] font-bold text-white" style={{ background: solid(d.color) }}>{i + 1}</span>
-                      <span className="flex-1">{d.emoji} {d.name}</span>
+                      <span className="flex-1 flex items-center gap-2"><Icon name={d.icon} size={15} className="text-ink2" />{d.name}</span>
                       <span className="text-ink2">quita em <b className="text-ink capitalize">{monthName(chosen.payoffMonth[id])}</b></span>
                     </div>
                   )
@@ -135,7 +136,7 @@ function Stat({ title, v, delay, accent }: { title: string; v: string; delay: nu
   return (
     <Card delay={delay} className="!p-4 sm:!p-5">
       <div className="text-[13px] text-ink2 mb-1">{title}</div>
-      <div className={`money num font-bold capitalize ${accent ? 'text-[21px] sm:text-[24px]' : 'text-[20px] sm:text-[24px]'}`} style={accent ? { color: 'var(--c-green)' } : undefined}>{v}</div>
+      <div className={`money num font-bold capitalize ${accent ? 'text-[21px] sm:text-[24px]' : 'text-[20px] sm:text-[24px]'}`} style={accent ? { color: 'color-mix(in srgb, var(--c-green) 62%, var(--ink))' } : undefined}>{v}</div>
     </Card>
   )
 }
@@ -144,7 +145,7 @@ function DebtForm({ debt, current, onClose }: { debt?: Debt; current?: number; o
   const { add, update, remove, notify } = useStore()
   const [name, setName] = useState(debt?.name ?? '')
   const [creditor, setCreditor] = useState(debt?.creditor ?? '')
-  const [emoji, setEmoji] = useState(debt?.emoji ?? '💳')
+  const [icon, setIcon] = useState(debt?.icon ?? 'card')
   const [color, setColor] = useState<ColorKey>(debt?.color ?? 'red')
   const [balance, setBalance] = useState(current !== undefined ? String(current).replace('.', ',') : '')
   const [rate, setRate] = useState(debt ? String(debt.interest_monthly).replace('.', ',') : '')
@@ -156,7 +157,7 @@ function DebtForm({ debt, current, onClose }: { debt?: Debt; current?: number; o
     if (!name.trim()) return setErr('Dê um nome')
     if (!(b >= 0)) return setErr('Informe o saldo devedor')
     const row = {
-      name: name.trim(), creditor: creditor.trim(), emoji, color, balance: b, balance_date: todayISO(),
+      name: name.trim(), creditor: creditor.trim(), icon, color, balance: b, balance_date: todayISO(),
       interest_monthly: parseMoney(rate) || 0, min_payment: parseMoney(min) || 0, due_day: due ? Math.min(Math.max(parseInt(due, 10), 1), 31) : null,
     }
     if (debt) update('debts', debt.id, row)
@@ -178,7 +179,7 @@ function DebtForm({ debt, current, onClose }: { debt?: Debt; current?: number; o
           <Field label="Vence dia"><input className="input" type="number" min={1} max={31} value={due} onChange={(e) => setDue(e.target.value)} /></Field>
         </div>
         {err && <div className="text-[13px]" style={{ color: 'var(--c-red)' }}>{err}</div>}
-        <Field label="Ícone"><EmojiPick value={emoji} onChange={setEmoji} /></Field>
+        <Field label="Ícone"><IconPick value={icon} onChange={setIcon} /></Field>
         <Field label="Cor"><ColorPick value={color} onChange={setColor} keys={COLOR_KEYS} /></Field>
       </div>
     </Sheet>

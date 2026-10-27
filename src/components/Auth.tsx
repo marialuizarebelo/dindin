@@ -39,11 +39,11 @@ export default function Auth() {
     <div className="min-h-dvh grid place-items-center px-5">
       <form onSubmit={submit} className="glass-strong fade-up w-full max-w-[380px] rounded-[30px] p-7 flex flex-col gap-4">
         <div className="flex flex-col items-center gap-3 pb-2">
-          <div className="h-14 w-14 rounded-2xl grid place-items-center text-white" style={{ background: 'linear-gradient(135deg,#8aa4ff,#b99bf0)', boxShadow: '0 10px 28px rgba(120,130,240,.4)' }}>
+          <div className="h-14 w-14 rounded-2xl grid place-items-center text-white" style={{ background: 'linear-gradient(135deg,#efb4c8,#c7aef0)', boxShadow: '0 10px 28px rgba(200,130,170,.42)' }}>
             <Lock size={24} />
           </div>
           <div className="text-center">
-            <h1 className="m-0 text-[26px] font-bold tracking-tight">dindin</h1>
+            <h1 className="m-0 font-serif text-[32px] font-semibold tracking-tight">dindin</h1>
             <p className="m-0 text-ink2 text-sm">{mode === 'reset' ? 'Redefinir senha' : 'Suas finanças, só suas.'}</p>
           </div>
         </div>

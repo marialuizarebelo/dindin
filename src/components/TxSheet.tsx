@@ -6,6 +6,7 @@ import { money, parseMoney } from '../lib/format'
 import { monthKey, todayISO } from '../lib/period'
 import type { Kind, Nature, Transaction } from '../lib/types'
 import { Chip, ConfirmButton, Field, Seg, Sheet } from './ui'
+import { Icon } from './Icon'
 
 type Preset = Partial<Omit<Transaction, 'id'>>
 interface Ctx { open: (preset?: Preset) => void; edit: (t: Transaction) => void }
@@ -151,7 +152,7 @@ function TxForm({ preset, editing, onClose }: { preset?: Preset; editing?: Trans
           <Field label="Origem">
             <div className="flex flex-wrap gap-2">
               {data.sources.map((s) => (
-                <Chip key={s.id} color={s.color} active={sourceId === s.id} onClick={() => setSourceId(sourceId === s.id ? null : s.id)}>{s.emoji} {s.name}</Chip>
+                <Chip key={s.id} color={s.color} active={sourceId === s.id} onClick={() => setSourceId(sourceId === s.id ? null : s.id)}><Icon name={s.icon} size={15} /> {s.name}</Chip>
               ))}
             </div>
           </Field>
@@ -159,7 +160,7 @@ function TxForm({ preset, editing, onClose }: { preset?: Preset; editing?: Trans
           <Field label="Categoria">
             <div className="flex flex-wrap gap-2">
               {cats.map((c) => (
-                <Chip key={c.id} color={c.color} active={categoryId === c.id} onClick={() => setCategoryId(categoryId === c.id ? null : c.id)}>{c.emoji} {c.name}</Chip>
+                <Chip key={c.id} color={c.color} active={categoryId === c.id} onClick={() => setCategoryId(categoryId === c.id ? null : c.id)}><Icon name={c.icon} size={15} /> {c.name}</Chip>
               ))}
             </div>
           </Field>
@@ -183,7 +184,7 @@ function TxForm({ preset, editing, onClose }: { preset?: Preset; editing?: Trans
           <Field label="Para qual meta? (opcional)">
             <select className="input" value={goalId ?? ''} onChange={(e) => setGoalId(e.target.value || null)}>
               <option value="">Sem meta</option>
-              {data.goals.map((g) => <option key={g.id} value={g.id}>{g.emoji} {g.name}</option>)}
+              {data.goals.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </Field>
         )}
@@ -196,7 +197,7 @@ function TxForm({ preset, editing, onClose }: { preset?: Preset; editing?: Trans
               if (v && dc && !categoryId) setCategoryId(dc.id)
             }}>
               <option value="">Não</option>
-              {data.debts.map((d) => <option key={d.id} value={d.id}>{d.emoji} {d.name}</option>)}
+              {data.debts.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
             </select>
           </Field>
         )}

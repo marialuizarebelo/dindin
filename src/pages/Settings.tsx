@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Download, LogOut, Plus } from 'lucide-react'
+import { Icon } from '../components/Icon'
+import { saveName, useName } from '../lib/prefs'
 import { useStore } from '../lib/store'
 import { supabase } from '../lib/supabase'
 import { COLOR_KEYS } from '../lib/colors'
-import { Card, ColorPick, ConfirmButton, EmojiPick, Field, PageTitle, Sheet, Tag } from '../components/ui'
+import { Card, ColorPick, ConfirmButton, IconPick, Field, PageTitle, Sheet, Tag } from '../components/ui'
 import type { Category, ColorKey, Source } from '../lib/types'
 
 function download(name: string, text: string, type: string) {
@@ -20,6 +22,8 @@ export default function Settings() {
   const [catEdit, setCatEdit] = useState<Category | 'new-expense' | 'new-investment' | null>(null)
   const [srcEdit, setSrcEdit] = useState<Source | 'new' | null>(null)
   const [pw, setPw] = useState('')
+  const savedName = useName()
+  const [name, setName] = useState(savedName)
 
   const exportCsv = () => {
     const cat = new Map(data.categories.map((c) => [c.id, c.name]))
@@ -43,6 +47,15 @@ export default function Settings() {
     <>
       <PageTitle title="Ajustes" />
       <div className="grid gap-4 lg:grid-cols-2">
+        <Card delay={10} className="lg:col-span-2">
+          <div className="font-semibold text-[16px] mb-3">Como quer ser chamada?</div>
+          <div className="flex gap-2 max-w-sm">
+            <input className="input" placeholder="Seu nome" value={name} onChange={(e) => setName(e.target.value)} />
+            <button className="btn btn-primary" onClick={() => { saveName(name); notify('Nome salvo') }}>Salvar</button>
+          </div>
+          <p className="text-[12.5px] text-ink2 mb-0 mt-2">Aparece na saudação da tela inicial. Fica guardado só neste aparelho.</p>
+        </Card>
+
         <Card delay={20}>
           <div className="flex items-center justify-between mb-3">
             <div className="font-semibold text-[16px]">Categorias de despesa</div>
@@ -50,7 +63,7 @@ export default function Settings() {
           </div>
           <div className="flex flex-wrap gap-2">
             {data.categories.filter((c) => c.kind === 'expense').map((c) => (
-              <button key={c.id} className="bg-transparent border-0 p-0" onClick={() => setCatEdit(c)}><Tag color={c.color} className="!text-[13.5px] !py-1 !px-2.5">{c.emoji} {c.name}</Tag></button>
+              <button key={c.id} className="bg-transparent border-0 p-0" onClick={() => setCatEdit(c)}><Tag color={c.color} className="!text-[13.5px] !py-1 !px-2.5"><Icon name={c.icon} size={14} /> {c.name}</Tag></button>
             ))}
           </div>
           <hr className="hair my-4" />
@@ -60,7 +73,7 @@ export default function Settings() {
           </div>
           <div className="flex flex-wrap gap-2">
             {data.categories.filter((c) => c.kind === 'investment').map((c) => (
-              <button key={c.id} className="bg-transparent border-0 p-0" onClick={() => setCatEdit(c)}><Tag color={c.color} className="!text-[13.5px] !py-1 !px-2.5">{c.emoji} {c.name}</Tag></button>
+              <button key={c.id} className="bg-transparent border-0 p-0" onClick={() => setCatEdit(c)}><Tag color={c.color} className="!text-[13.5px] !py-1 !px-2.5"><Icon name={c.icon} size={14} /> {c.name}</Tag></button>
             ))}
           </div>
         </Card>
@@ -72,7 +85,7 @@ export default function Settings() {
           </div>
           <div className="flex flex-wrap gap-2">
             {data.sources.map((s) => (
-              <button key={s.id} className="bg-transparent border-0 p-0" onClick={() => setSrcEdit(s)}><Tag color={s.color} className="!text-[13.5px] !py-1 !px-2.5">{s.emoji} {s.name}</Tag></button>
+              <button key={s.id} className="bg-transparent border-0 p-0" onClick={() => setSrcEdit(s)}><Tag color={s.color} className="!text-[13.5px] !py-1 !px-2.5"><Icon name={s.icon} size={14} /> {s.name}</Tag></button>
             ))}
           </div>
           <p className="text-[12.5px] text-ink2 mb-0 mt-3">Cada receita pode ter uma origem — assim você vê de onde vem cada real.</p>
@@ -112,13 +125,13 @@ export default function Settings() {
 function CategoryForm({ cat, kind, onClose }: { cat?: Category; kind: 'expense' | 'investment'; onClose: () => void }) {
   const { add, update, remove, data, notify } = useStore()
   const [name, setName] = useState(cat?.name ?? '')
-  const [emoji, setEmoji] = useState(cat?.emoji ?? '✨')
+  const [icon, setIcon] = useState(cat?.icon ?? 'sparkles')
   const [color, setColor] = useState<ColorKey>(cat?.color ?? 'blue')
   const used = cat ? data.transactions.filter((t) => t.category_id === cat.id).length : 0
   const save = () => {
     if (!name.trim()) return
-    if (cat) update('categories', cat.id, { name: name.trim(), emoji, color })
-    else add('categories', { name: name.trim(), emoji, color, kind })
+    if (cat) update('categories', cat.id, { name: name.trim(), icon, color })
+    else add('categories', { name: name.trim(), icon, color, kind })
     notify('Categoria salva')
     onClose()
   }
@@ -127,7 +140,7 @@ function CategoryForm({ cat, kind, onClose }: { cat?: Category; kind: 'expense' 
       footer={<>{cat && <ConfirmButton className="mr-auto" onConfirm={() => { remove('categories', [cat.id]); onClose() }}>Apagar</ConfirmButton>}<button className="btn btn-primary" onClick={save}>Salvar</button></>}>
       <div className="flex flex-col gap-4">
         <Field label="Nome"><input className="input" autoFocus value={name} onChange={(e) => setName(e.target.value)} /></Field>
-        <Field label="Ícone"><EmojiPick value={emoji} onChange={setEmoji} /></Field>
+        <Field label="Ícone"><IconPick value={icon} onChange={setIcon} /></Field>
         <Field label="Cor"><ColorPick value={color} onChange={setColor} keys={COLOR_KEYS} /></Field>
         {used > 0 && <div className="text-[12.5px] text-ink2">{used} lançamentos usam esta categoria; se apagar, eles ficam “sem categoria”.</div>}
       </div>
@@ -138,12 +151,12 @@ function CategoryForm({ cat, kind, onClose }: { cat?: Category; kind: 'expense' 
 function SourceForm({ src, onClose }: { src?: Source; onClose: () => void }) {
   const { add, update, remove, notify } = useStore()
   const [name, setName] = useState(src?.name ?? '')
-  const [emoji, setEmoji] = useState(src?.emoji ?? '💼')
+  const [icon, setIcon] = useState(src?.icon ?? 'briefcase')
   const [color, setColor] = useState<ColorKey>(src?.color ?? 'green')
   const save = () => {
     if (!name.trim()) return
-    if (src) update('sources', src.id, { name: name.trim(), emoji, color })
-    else add('sources', { name: name.trim(), emoji, color })
+    if (src) update('sources', src.id, { name: name.trim(), icon, color })
+    else add('sources', { name: name.trim(), icon, color })
     notify('Origem salva')
     onClose()
   }
@@ -152,7 +165,7 @@ function SourceForm({ src, onClose }: { src?: Source; onClose: () => void }) {
       footer={<>{src && <ConfirmButton className="mr-auto" onConfirm={() => { remove('sources', [src.id]); onClose() }}>Apagar</ConfirmButton>}<button className="btn btn-primary" onClick={save}>Salvar</button></>}>
       <div className="flex flex-col gap-4">
         <Field label="Nome"><input className="input" autoFocus value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex: Salário, Freelas, Aluguel recebido" /></Field>
-        <Field label="Ícone"><EmojiPick value={emoji} onChange={setEmoji} /></Field>
+        <Field label="Ícone"><IconPick value={icon} onChange={setIcon} /></Field>
         <Field label="Cor"><ColorPick value={color} onChange={setColor} keys={COLOR_KEYS} /></Field>
       </div>
     </Sheet>
